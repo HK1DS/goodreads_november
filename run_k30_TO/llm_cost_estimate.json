@@ -1,0 +1,28 @@
+{
+  "step1": {
+    "pending_user_calls": 0,
+    "pending_item_calls": 0,
+    "calls": 0,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "usd_list_price": 0.0
+  },
+  "step2": {
+    "pending_user_calls": 0,
+    "pending_item_calls": 0,
+    "calls": 0,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "usd_list_price": 0.0
+  },
+  "total": {
+    "calls": 0,
+    "usd_list_price": 0.0,
+    "usd_observed_range": [
+      0.0,
+      0.0
+    ],
+    "unique_user_profiles": 61861,
+    "unique_item_profiles": 27574
+  }
+}

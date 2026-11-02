@@ -1,0 +1,49 @@
+# User-editable configuration in one place.
+
+paths:
+  input_csv: data/k_core/profiles_k100.csv    # required columns: user_id,user_profile,item_id,item_profile
+  workdir: run/                       # will be created
+  step1_output: run/step1_intents.csv
+  step2_output: run/step2_related_intents.csv
+  kg_triples: run/kg_triples.txt      # recbole KG file: head  relation  tail
+  inter_file: data/k_core/interactions_k100.csv    # recbole inter file: user_id,item_id,rating
+  recbole_dump: run/recbole/
+  user_bank_pt: run/user_bank.pt      # needs to be generated in step2 and converted in step3.
+  item_bank_pt: run/item_bank.pt
+
+
+llm:
+  # Luxia Cloud API (OpenAI GPT-4o-mini Bridge)
+  base_url: https://bridge.luxiacloud.com/llm/openai/chat/completions/gpt-4o-mini
+  api_key: "${LUXIA_API_KEY}"
+  model: "llm"
+  provider: luxia
+  temperature: 0.2
+  top_p: 0.95
+  max_tokens: 2048
+
+rag:
+  encoder: "sentence-transformers/all-mpnet-base-v2"
+  annoy_trees: 50
+  knn_k: 100
+  encoding_npy: run/intents_emb.npy
+  annoy_index: run/intents.ann
+  vocab_json: run/intent_vocab.json
+
+recbole:
+  model: "IKGR"
+  dataset: "ikgr-custom"            # Modify to your processed datasets here.
+  topk: [10, 30]
+  metrics: ["Recall", "MRR", "NDCG", "Hit", "Precision"]
+  # Shared training / model-selection protocol (identical for EVERY spec incl. BPR/LightGCN).
+  # The checkpoint with the best validation `valid_metric` is evaluated on test.
+  epochs: 40                        # max epochs (early stopping usually ends sooner)
+  eval_step: 2                      # validate every N epochs
+  stopping_step: 3                  # stop after N validations without improvement
+  valid_metric: NDCG@10
+  learning_rate: 0.001
+  reg_weight: 0.000001
+  lambda_mix: 0.1                   # lambda in Eq. (11)
+  embedding_size: 512
+  gcn_layers: 1
+  dropout: 0.1
