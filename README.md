@@ -5,12 +5,12 @@ IKGR / DynLLM / CORONA에서 착안한 구성요소(LLM intent KG, 메타데이�
 그래프 후보생성·재랭킹)를 RecBole 위에 재구현하고, **언제 이 신호들이 협업 필터링(CF)을 보완하는지**를
 시간순 평가로 검증한다. MovieLens 25M / Amazon Clothing 실험은 별도 레포에 있다.
 
-> **현재 상태 (2026-11-02)**
+> **현재 상태 (2026-11-03)**
 > 이전 Goodreads 결과(`run_k30/`, `run_k50/`, `IKGR_REPORT.md`, `DYNLLM_REPORT.md`, `CORONA_REPORT.md`,
 > Progress Report 2의 Goodreads† 행)는 **user profile이 split과 무관하게 만들어진 레거시 프로토콜**의 결과다.
 > 프로필에 검증/테스트 기간 책이 들어갈 수 있었으므로 **최종 보고서에는 인용하지 말고**, 아래의 train-only
-> 파이프라인으로 다시 돌린 결과(`run_k{K}_{SPLIT}/`)를 쓴다. k=30 TO 실데이터 재실행(seed 2020, 6개 spec)은 끝났다: `run_k30_TO/slice_eval_TO_result.json`, `run_k30_TO/report_TO.md`.
-> seed 2021·2022(IKGR_dyn_nointent, IKGR_dyn, LightGCN, BPR)는 `scripts\run_seeds_3seed.bat`로 추가 실행 예정.
+> 파이프라인으로 다시 돌린 결과(`run_k{K}_{SPLIT}/`)를 쓴다. k=30 TO 실데이터 재실행 완료: 6개 spec seed 2020 + IKGR_dyn_nointent·IKGR_dyn·LightGCN·BPR seed 2021·2022
+> (결과 `run_k30_TO/slice_eval_TO_result.json`, 유저 단위 비교 `run_k30_TO/report_TO.md`).
 
 ---
 

@@ -11,7 +11,7 @@
 >   인기도 페널티 재랭킹 대조군, `IKGR_dyn_nointent` ablation, per-user 덤프 + `paired_compare.py`.
 > - **실행:** `scripts/run_goodreads_revalidation.ps1` (또는 `run_pipeline.py --k 30 --split TO`). 자세한 내용은 README.md.
 > - **검증:** `python -m pytest -q tests/`, `python tests/smoke_e2e.py --workdir <tmp>` (가짜 LLM/인코더, API 비용 0).
-> - **상태 (2026-11-02):** k=30 TO seed 2020 실데이터 재실행 완료(`run_k30_TO/report_TO.md`). seed 2021·2022는 `scripts\run_seeds_3seed.bat`로 추가 예정.
+> - **상태 (2026-11-03):** k=30 TO 실데이터 재실행 완료 — 6개 spec seed 2020 + IKGR_dyn_nointent·IKGR_dyn·LightGCN·BPR seed 2021·2022 (`run_k30_TO/report_TO.md`).
 
 ---
 
