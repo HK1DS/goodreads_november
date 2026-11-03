@@ -35,7 +35,18 @@ Env overrides:
 import os, json, time, math, yaml, hashlib, random
 import scipy.sparse as _sp
 if not hasattr(_sp.dok_matrix, "_update"):
-    _sp.dok_matrix._update = dict.update
+    # RecBole 1.2.0 builds LightGCN's normalized adjacency with dok_matrix._update(),
+    # which SciPy >= 1.13 removed. There the entries live in self._dict; the old shim
+    # (`_update = dict.update`) wrote into the unused dict base instead, so the
+    # adjacency was silently EMPTY and "LightGCN" never propagated (it trained as MF
+    # with layer-mean scaling). Write into the real store.
+    def _dok_update(self, data):
+        store = getattr(self, "_dict", None)
+        if store is None:
+            dict.update(self, data)
+        else:
+            store.update(data)
+    _sp.dok_matrix._update = _dok_update
 import numpy as np
 import pandas as pd
 import torch
@@ -599,6 +610,15 @@ def build_specs(paths):
         "IKGR_dyn_nointent": (IKGRModel, {"use_kg": False, "kg_cap": 32,
                                           "use_meta_kg": True, "meta_kg_path": meta,
                                           "use_dynamic": True}),
+        # Same facets (metadata KG + recency, +/- LLM intent) on a LightGCN backbone:
+        # base user/item embeddings are propagated over the train graph (2 layers,
+        # as RecBole LightGCN's default) before the facets are added.
+        "IKGR_lgcn_dyn_nointent": (IKGRModel, {"use_kg": False, "kg_cap": 32,
+                                               "use_meta_kg": True, "meta_kg_path": meta,
+                                               "use_dynamic": True, "lgcn_layers": 2}),
+        "IKGR_lgcn_dyn": (IKGRModel, {"use_kg": True, "kg_pack_path": kg, "kg_layers": 1, "kg_cap": 32,
+                                      "intent_learnable": False, "use_meta_kg": True, "meta_kg_path": meta,
+                                      "use_dynamic": True, "lgcn_layers": 2}),
         "IKGR_dyn_attn": (IKGRModel, {"use_kg": True, "kg_pack_path": kg, "kg_layers": 1, "kg_cap": 32,
                                       "intent_learnable": False, "use_meta_kg": True, "meta_kg_path": meta,
                                       "use_dynamic": True, "profile_attn": True}),

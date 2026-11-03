@@ -178,6 +178,16 @@ class IKGR(GeneralRecommender):
             self.corona_alpha = nn.Parameter(torch.tensor(1.0))   # intent/KG channel
             self.corona_beta = nn.Parameter(torch.tensor(1.0))    # dynamic channel
             self.corona_gamma = nn.Parameter(torch.tensor(1.0))   # CF/base channel
+        # LightGCN backbone (lgcn_layers > 0): the CF base embeddings are propagated
+        # over the TRAIN user-item graph exactly as RecBole's LightGCN does
+        # (symmetric-normalized adjacency, layer-mean), and the KG/metadata/recency
+        # facets are added on top of the propagated representations instead of the
+        # raw MF embeddings. lgcn_layers=0 (default) leaves every existing spec unchanged.
+        self.lgcn_layers = int(_cfg(config, "lgcn_layers", 0))
+        if self.lgcn_layers > 0 and (self.use_corona or self.profile_attn
+                                     or (bool(_cfg(config, "use_kg", True)) and int(_cfg(config, "kg_layers", 1)) >= 2)):
+            raise ValueError("lgcn_layers > 0 is only supported with the default additive fusion "
+                             "(no use_corona / profile_attn / kg_layers>=2)")
 
         n_users, n_items = self.n_users, self.n_items
         self.user_embedding = nn.Embedding(n_users, self.embed_dim)
@@ -191,6 +201,9 @@ class IKGR(GeneralRecommender):
             self._build_kg(dataset)
         if self.use_meta_kg:
             self._build_meta_kg(dataset)
+        self._adj = None
+        if self.lgcn_layers > 0:
+            self._build_lgcn_adj(dataset)
         # Full-sort eval cache: all-item representations are expensive to recompute
         # (KG/meta node gather over every item) and were being rebuilt for EVERY
         # test-user batch. Cache them once per eval pass (set via eval_cache_items).
@@ -199,6 +212,7 @@ class IKGR(GeneralRecommender):
         self._cache_icf = None
         self._cache_ikg = None
         self._cache_u_all = None
+        self._cache_lg = None
 
     # ---- KG construction (learnable intent nodes + normalized user/item<->intent adjacency)
     def _build_kg(self, dataset):
@@ -332,6 +346,42 @@ class IKGR(GeneralRecommender):
                                 "item_shelf_ids", "item_shelf_mask", "shelf_alpha")
         self._meta_ready = True
 
+    def _build_lgcn_adj(self, dataset):
+        """Symmetric-normalized bipartite adjacency of the TRAIN interactions,
+        D^-1/2 [[0, R], [R^T, 0]] D^-1/2 (same construction as RecBole LightGCN).
+        `dataset` is the train split's dataset, so no valid/test edge enters."""
+        import numpy as np
+        R = dataset.inter_matrix(form="coo").astype(np.float32).tocsr()
+        R.data[:] = 1.0                       # binary, duplicates collapsed
+        R = R.tocoo()
+        nu, ni = self.n_users, self.n_items
+        rows = np.concatenate([R.row, R.col + nu])
+        cols = np.concatenate([R.col + nu, R.row])
+        deg = np.bincount(rows, minlength=nu + ni).astype(np.float32) + 1e-7
+        dinv = np.power(deg, -0.5)
+        vals = dinv[rows] * dinv[cols]
+        self._adj_idx = torch.from_numpy(np.stack([rows, cols]).astype(np.int64))
+        self._adj_val = torch.from_numpy(vals.astype(np.float32))
+        self._adj_shape = (nu + ni, nu + ni)
+
+    def _lgcn_adj(self):
+        dev = self.user_embedding.weight.device
+        if self._adj is None or self._adj.device != dev:
+            self._adj = torch.sparse_coo_tensor(self._adj_idx, self._adj_val,
+                                                self._adj_shape).coalesce().to(dev)
+        return self._adj
+
+    def _lgcn_all(self):
+        """(U, I) = layer-mean of LightGCN propagation of the base CF embeddings."""
+        E = torch.cat([self.user_embedding.weight, self.item_embedding.weight], dim=0)
+        A = self._lgcn_adj()
+        acc, cur = E, E
+        for _ in range(self.lgcn_layers):
+            cur = torch.sparse.mm(A, cur)
+            acc = acc + cur
+        out = acc / (self.lgcn_layers + 1)
+        return torch.split(out, [self.n_users, self.n_items], dim=0)
+
     def set_recency(self, item_ids, weights):
         """Inject per-user recency profile (train-only). item_ids/weights:
         [n_users, recency_topn] (weights are recency-normalized, 0 for padding)."""
@@ -353,8 +403,9 @@ class IKGR(GeneralRecommender):
             e = e + g
         return e
 
-    def _emb_users(self, uids):
-        base = self.user_embedding(uids)
+    def _emb_users(self, uids, lg=None):
+        """lg = (U, I) LightGCN-propagated tables when lgcn_layers > 0, else None."""
+        base = self.user_embedding(uids) if lg is None else lg[0][uids]
         if self.use_kg and self._kg_ready and self.kg_layers >= 2:
             base = self._propagate()[0][uids]
         gated, raw = [], []
@@ -364,12 +415,13 @@ class IKGR(GeneralRecommender):
         if self.use_dynamic and self._recency_ready:
             rid = self.recency_item_ids[uids]
             w = self.recency_weights[uids].unsqueeze(-1)
-            dyn = (self.item_embedding(rid) * w).sum(1)
+            item_rep = self.item_embedding(rid) if lg is None else lg[1][rid]
+            dyn = (item_rep * w).sum(1)
             gated.append(self.dynamic_alpha * dyn); raw.append(dyn)
         return self._fuse(base, gated, raw, getattr(self, "user_attn", None))
 
-    def _emb_items(self, iids):
-        base = self.item_embedding(iids)
+    def _emb_items(self, iids, lg=None):
+        base = self.item_embedding(iids) if lg is None else lg[1][iids]
         if self.use_kg and self._kg_ready and self.kg_layers >= 2:
             return self._propagate()[1][iids]
         gated, raw = [], []
@@ -460,6 +512,9 @@ class IKGR(GeneralRecommender):
                 self._cache_icf, self._cache_ikg = self._corona_item_channels(all_items)
             elif self.use_kg and self._kg_ready and self.kg_layers >= 2:
                 self._cache_u_all, self._cache_i_all = self._propagate()
+            elif self.lgcn_layers > 0:
+                self._cache_lg = self._lgcn_all()
+                self._cache_i_all = self._emb_items(all_items, self._cache_lg)
             else:
                 self._cache_i_all = self._emb_items(all_items)
         self._item_cache_on = True
@@ -472,6 +527,7 @@ class IKGR(GeneralRecommender):
     def clear_eval_cache(self):
         self._item_cache_on = False
         self._cache_i_all = self._cache_icf = self._cache_ikg = None
+        self._cache_lg = None
 
     def _propagate(self):
         """Return (u_all, i_all): KG-enriched user/item embeddings.
@@ -504,8 +560,9 @@ class IKGR(GeneralRecommender):
         self._item_cache_on = False
         if self.use_corona:
             return self._corona_pair(user, item)
-        u = self.dropout_layer(self._emb_users(user))
-        i = self.dropout_layer(self._emb_items(item))
+        lg = self._lgcn_all() if self.lgcn_layers > 0 else None
+        u = self.dropout_layer(self._emb_users(user, lg))
+        i = self.dropout_layer(self._emb_items(item, lg))
         return (u * i).sum(dim=-1)
 
     def calculate_loss(self, interaction):
@@ -530,13 +587,14 @@ class IKGR(GeneralRecommender):
                        + self.item_embedding(pos).norm(2).pow(2))
             return loss + self.reg_weight * reg / user.shape[0]
 
-        u = self._emb_users(user)
-        pos_e = self._emb_items(pos)
+        lg = self._lgcn_all() if self.lgcn_layers > 0 else None   # one propagation per step
+        u = self._emb_users(user, lg)
+        pos_e = self._emb_items(pos, lg)
         pos_score = (u * pos_e).sum(dim=-1)
 
         if has_neg:
             neg = interaction[self.NEG_ITEM_ID]
-            neg_e = self._emb_items(neg)
+            neg_e = self._emb_items(neg, lg)
             neg_score = (u * neg_e).sum(dim=-1)
             loss = -F.logsigmoid(pos_score - neg_score).mean()
             reg = (u.norm(2).pow(2) + pos_e.norm(2).pow(2) + neg_e.norm(2).pow(2))
@@ -557,8 +615,9 @@ class IKGR(GeneralRecommender):
     def predict(self, interaction):
         if self.use_corona:
             return self._corona_pair(interaction[self.USER_ID], interaction[self.ITEM_ID])
-        u = self._emb_users(interaction[self.USER_ID])
-        i = self._emb_items(interaction[self.ITEM_ID])
+        lg = self._lgcn_all() if self.lgcn_layers > 0 else None
+        u = self._emb_users(interaction[self.USER_ID], lg)
+        i = self._emb_items(interaction[self.ITEM_ID], lg)
         return (u * i).sum(dim=-1)
 
     def full_sort_predict(self, interaction):
@@ -569,6 +628,6 @@ class IKGR(GeneralRecommender):
         if self.use_kg and self._kg_ready and self.kg_layers >= 2:
             u_all = self._propagate()[0]
             return torch.matmul(u_all[users], self._cache_i_all.t())
-        u = self._emb_users(users)                                   # [B, d]
+        u = self._emb_users(users, self._cache_lg if self.lgcn_layers > 0 else None)   # [B, d]
         return torch.matmul(u, self._cache_i_all.t())
 

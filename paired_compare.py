@@ -31,7 +31,9 @@ import numpy as np
 import pandas as pd
 
 DEFAULT_PAIRS = [("IKGR_dyn", "BPR"), ("IKGR_dyn", "LightGCN"), ("IKGR_dyn", "IKGR_kgoff"),
-                 ("IKGR_dyn", "IKGR_dyn_nointent"), ("IKGR_full_hetero", "IKGR_meta_only")]
+                 ("IKGR_dyn", "IKGR_dyn_nointent"), ("IKGR_full_hetero", "IKGR_meta_only"),
+                 ("IKGR_lgcn_dyn_nointent", "LightGCN"), ("IKGR_lgcn_dyn", "IKGR_lgcn_dyn_nointent"),
+                 ("IKGR_lgcn_dyn_nointent", "IKGR_dyn_nointent")]
 
 
 def load_user_means(pu_dir, result, metric, phase="test", seeds=None):

@@ -12,6 +12,10 @@
 > - **실행:** `scripts/run_goodreads_revalidation.ps1` (또는 `run_pipeline.py --k 30 --split TO`). 자세한 내용은 README.md.
 > - **검증:** `python -m pytest -q tests/`, `python tests/smoke_e2e.py --workdir <tmp>` (가짜 LLM/인코더, API 비용 0).
 > - **상태 (2026-11-03):** k=30 TO 실데이터 재실행 완료 — 6개 spec seed 2020 + IKGR_dyn_nointent·IKGR_dyn·LightGCN·BPR seed 2021·2022 (`run_k30_TO/report_TO.md`).
+> - **⚠️ 2026-11-04:** `dok_matrix._update = dict.update` shim 때문에 SciPy ≥ 1.13에서 RecBole LightGCN 인접행렬이 비어
+>   있었다 → 레거시·11-03의 모든 "LightGCN" 수치는 전파 없는 MF 변형이므로 무효. shim 수정 + `tests/test_lgcn_backbone.py`.
+>   LightGCN 재실행과 새 spec `IKGR_lgcn_dyn_nointent`/`IKGR_lgcn_dyn`(LightGCN 백본 + 메타 KG + recency ± intent)은
+>   `scripts\run_lgcn_backbone.bat`. 자세한 내용은 README 상단.
 
 ---
 

@@ -11,6 +11,15 @@ IKGR / DynLLM / CORONA에서 착안한 구성요소(LLM intent KG, 메타데이�
 > 프로필에 검증/테스트 기간 책이 들어갈 수 있었으므로 **최종 보고서에는 인용하지 말고**, 아래의 train-only
 > 파이프라인으로 다시 돌린 결과(`run_k{K}_{SPLIT}/`)를 쓴다. k=30 TO 실데이터 재실행 완료: 6개 spec seed 2020 + IKGR_dyn_nointent·IKGR_dyn·LightGCN·BPR seed 2021·2022
 > (결과 `run_k30_TO/slice_eval_TO_result.json`, 유저 단위 비교 `run_k30_TO/report_TO.md`).
+>
+> **⚠️ 2026-11-04 — LightGCN 베이스라인 버그 (레거시 + 2026-11-03 결과 모두 해당)**
+> RecBole 1.2.0의 LightGCN은 `scipy.sparse.dok_matrix._update()`로 인접행렬을 만든다. SciPy ≥ 1.13에는 이 메서드가
+> 없어서 `eval_slices.py`/`run_baselines.py`가 `_update = dict.update`로 대체했는데, SciPy 1.13부터 dok 값은
+> `self._dict`에 저장되므로 이 대체는 **빈 인접행렬**을 만든다(에러 없음). 즉 지금까지의 모든 "LightGCN" 결과는 그래프
+> 전파가 없는 MF 변형이다(`requirements-pipeline.txt`의 scipy==1.13.1에서 재현). shim을 `self._dict`에 쓰도록 고쳤고,
+> `tests/test_lgcn_backbone.py`가 인접행렬 nnz와 RecBole LightGCN 점수 일치를 검사한다. LightGCN은 다시 돌려야 한다
+> (`scripts\run_lgcn_backbone.bat`). 같은 스크립트가 새 spec `IKGR_lgcn_dyn_nointent`/`IKGR_lgcn_dyn`(메타데이터 KG +
+> recency ± intent를 LightGCN 백본 위에 얹은 모델, `lgcn_layers: 2`)도 돌린다.
 
 ---
 

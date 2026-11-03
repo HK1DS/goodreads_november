@@ -12,10 +12,17 @@ Results -> run/baselines_result.json
 """
 import os, json, time, yaml
 # --- compat shim: RecBole 1.2.0 calls scipy dok_matrix._update(), removed in
-#     newer scipy (>=1.8). dok_matrix still subclasses dict, so dict.update works.
+#     SciPy >= 1.13, where entries live in self._dict. `dict.update` (the old shim)
+#     wrote into the unused dict base -> EMPTY LightGCN adjacency. Use the real store.
 import scipy.sparse as _sp
 if not hasattr(_sp.dok_matrix, "_update"):
-    _sp.dok_matrix._update = dict.update
+    def _dok_update(self, data):
+        store = getattr(self, "_dict", None)
+        if store is None:
+            dict.update(self, data)
+        else:
+            store.update(data)
+    _sp.dok_matrix._update = _dok_update
 from recbole.config import Config
 from recbole.data import create_dataset, data_preparation
 from recbole.utils import get_model, get_trainer
