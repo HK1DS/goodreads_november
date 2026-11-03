@@ -44,6 +44,6 @@ recbole:
   learning_rate: 0.001
   reg_weight: 0.000001
   lambda_mix: 0.1                   # lambda in Eq. (11)
-  embedding_size: 512
+  embedding_size: 64                # shared by every spec; 512 made true LightGCN ~24 min/epoch
   gcn_layers: 1
   dropout: 0.1

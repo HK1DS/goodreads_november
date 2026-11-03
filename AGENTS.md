@@ -16,6 +16,8 @@
 >   있었다 → 레거시·11-03의 모든 "LightGCN" 수치는 전파 없는 MF 변형이므로 무효. shim 수정 + `tests/test_lgcn_backbone.py`.
 >   LightGCN 재실행과 새 spec `IKGR_lgcn_dyn_nointent`/`IKGR_lgcn_dyn`(LightGCN 백본 + 메타 KG + recency ± intent)은
 >   `scripts\run_lgcn_backbone.bat`. 자세한 내용은 README 상단.
+> - **2026-11-04:** 고친 LightGCN이 512차원에서 epoch당 ~24분이라 공통 `embedding_size`를 64로 낮춤. 512 결과는
+>   `run_k30_TO/archive_emb512/`에 보관, 64차원 재실행은 `scripts\run_emb64.bat`.
 
 ---
 

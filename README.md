@@ -20,6 +20,11 @@ IKGR / DynLLM / CORONA에서 착안한 구성요소(LLM intent KG, 메타데이�
 > `tests/test_lgcn_backbone.py`가 인접행렬 nnz와 RecBole LightGCN 점수 일치를 검사한다. LightGCN은 다시 돌려야 한다
 > (`scripts\run_lgcn_backbone.bat`). 같은 스크립트가 새 spec `IKGR_lgcn_dyn_nointent`/`IKGR_lgcn_dyn`(메타데이터 KG +
 > recency ± intent를 LightGCN 백본 위에 얹은 모델, `lgcn_layers: 2`)도 돌린다.
+>
+> **2026-11-04 — 공통 임베딩 차원 512 → 64.** 고친 LightGCN은 배치마다 그래프 전체를 전파해서 512차원에선
+> epoch당 약 24분(seed당 최대 ~17시간)이 걸렸다. 그래서 모든 spec의 `embedding_size`를 RecBole LightGCN 기본값인
+> 64로 낮추고 처음부터 다시 돌린다(`scripts\run_emb64.bat`). 512차원 결과(LightGCN은 전파 없는 버전)는
+> `run_k30_TO/archive_emb512/`에 보관했다. 두 차원의 수치는 서로 비교하지 않는다.
 
 ---
 
