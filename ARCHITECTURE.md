@@ -80,10 +80,27 @@ Amazon Clothing 등 다른 도메인에 옮길 때 이 문서와 아래 파일�
 
 ## 5. 실행
 
+### 데이터 (API 호출 없이 바로 실행)
+
+`data_bundle/`에 우리가 실제로 쓴 입력 데이터가 들어 있다(gzip 압축 후 100MB 미만 7조각, 약 610MB).
+풀면 `data/kc_k30/`(k-core 상호작용, RecBole `.inter`, train-only 프로필 + provenance)와
+`run_k30_TO/kg_pack.pt`(LLM intent KG), `run_k30_TO/meta_kg_pack.pt`(메타데이터 KG)가 생긴다.
+LLM intent는 이미 들어 있으므로 **intent spec까지 API 키 없이** 돌릴 수 있다.
+
+```powershell
+python scripts/unpack_data_bundle.py      # sha256 확인 후 압축 해제 (약 1.4GB)
+```
+
+### 학습·평가
+
 ```powershell
 # Windows, venv: scripts\setup_venv.ps1 로 생성
-python run_pipeline.py --k 30 --split TO --steps BCDER --seeds 2020 --specs IKGR_lgcn_dyn_nointent,LightGCN
+$env:IKGR_POP_RERANK_SPECS = "IKGR_kgoff,BPR,LightGCN,IKGR_dyn,IKGR_dyn_nointent,IKGR_lgcn_dyn_nointent,IKGR_lgcn_dyn"
+python run_pipeline.py --k 30 --split TO --steps ER --seeds 2022 --specs IKGR_lgcn_dyn_nointent,LightGCN
 ```
+- `--steps ER`: 번들을 푼 상태에서는 학습·평가(E)와 리포트(R)만 돌리면 된다. LLM 단계(B/C)와 KG 빌드(D)는 건너뛴다.
+- 결과: `run_k30_TO/slice_eval_TO_result.json`, `run_k30_TO/per_user_TO/`, `run_k30_TO/report_TO.md`.
+  한 seed 안에서 비교하는 모델들은 같은 PC에서 돌린다(GPU가 다르면 같은 seed라도 수치가 조금 다를 수 있다).
 - 단계: B(step1 LLM intent) / C(step2 RAG) / D(KG 빌드) / E(학습·평가) / R(paired 리포트). 끝난 단계·모델×seed는 재실행 시 건너뛴다.
 - intent를 쓰지 않는 spec(`*_nointent`, `LightGCN`, `BPR`)은 LLM 출력을 쓰지 않는다. 다만 D 단계의 intent KG 빌드는
   step2 출력이 필요하므로, LLM 없이 돌리려면 메타 KG만 `build_meta_kg.py --inter <RecBole .inter> --out <run_dir>/meta_kg_pack.pt`
