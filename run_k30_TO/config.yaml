@@ -45,6 +45,6 @@ recbole:
   learning_rate: 0.001
   reg_weight: 1.0e-06
   lambda_mix: 0.1
-  embedding_size: 512
+  embedding_size: 64
   gcn_layers: 1
   dropout: 0.1
