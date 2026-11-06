@@ -172,55 +172,162 @@
           "pairs": 2478824,
           "users_with_profile": 61874
         }
+      },
+      "2021": {
+        "overall": {
+          "recall@10": 0.0923,
+          "ndcg@10": 0.0859,
+          "hit@10": 0.3265,
+          "recall@30": 0.1754,
+          "ndcg@30": 0.1158,
+          "hit@30": 0.5262
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0147,
+          "ndcg@10": 0.0104,
+          "hit@10": 0.029,
+          "recall@30": 0.0293,
+          "ndcg@30": 0.0149,
+          "hit@30": 0.0562
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.1092,
+            "recall@10": 0.1413
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0961,
+            "recall@10": 0.1198
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.086,
+            "recall@10": 0.0963
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.071,
+            "recall@10": 0.0697
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0665,
+            "recall@10": 0.0326
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0859,
+            "recall@10": 0.0923,
+            "recall@30": 0.1754
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.4562,
+        "novelty_bits": 10.5929,
+        "avg_rec_popularity": 8749.3,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 15069.9,
+        "fit": {
+          "best_epoch": 37,
+          "last_epoch": 39,
+          "best_valid_score": 0.1131,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
       }
     },
     "agg": {
       "overall.ndcg@10": {
-        "mean": 0.0871,
-        "std": 0.0,
+        "mean": 0.0865,
+        "std": 0.0006,
         "seeds": [
-          0.0871
+          0.0871,
+          0.0859
         ]
       },
       "overall.recall@10": {
-        "mean": 0.093,
-        "std": 0.0,
+        "mean": 0.0926,
+        "std": 0.0004,
         "seeds": [
-          0.093
+          0.093,
+          0.0923
         ]
       },
       "long_tail.recall@10": {
-        "mean": 0.0153,
-        "std": 0.0,
+        "mean": 0.015,
+        "std": 0.0003,
         "seeds": [
-          0.0153
+          0.0153,
+          0.0147
         ]
       },
       "long_tail.recall@30": {
-        "mean": 0.0296,
-        "std": 0.0,
+        "mean": 0.0295,
+        "std": 0.0002,
         "seeds": [
-          0.0296
+          0.0296,
+          0.0293
         ]
       },
       "coverage@10": {
-        "mean": 0.4616,
-        "std": 0.0,
+        "mean": 0.4589,
+        "std": 0.0027,
         "seeds": [
-          0.4616
+          0.4616,
+          0.4562
         ]
       },
       "novelty_bits": {
-        "mean": 10.5654,
-        "std": 0.0,
+        "mean": 10.5792,
+        "std": 0.0137,
         "seeds": [
-          10.5654
+          10.5654,
+          10.5929
         ]
       },
       "best_epoch": {
-        "mean": 39.0,
+        "mean": 38.0,
         "seeds": [
-          39
+          39,
+          37
         ]
       }
     }
@@ -399,55 +506,162 @@
           "pairs": 2478824,
           "users_with_profile": 61874
         }
+      },
+      "2021": {
+        "overall": {
+          "recall@10": 0.0727,
+          "ndcg@10": 0.067,
+          "hit@10": 0.2465,
+          "recall@30": 0.1357,
+          "ndcg@30": 0.09,
+          "hit@30": 0.412
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0246,
+          "ndcg@10": 0.0176,
+          "hit@10": 0.0534,
+          "recall@30": 0.0495,
+          "ndcg@30": 0.0253,
+          "hit@30": 0.1013
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0893,
+            "recall@10": 0.1139
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0786,
+            "recall@10": 0.0965
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0689,
+            "recall@10": 0.0766
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0542,
+            "recall@10": 0.0531
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0433,
+            "recall@10": 0.022
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.067,
+            "recall@10": 0.0727,
+            "recall@30": 0.1357
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.752,
+        "novelty_bits": 12.6915,
+        "avg_rec_popularity": 4260.0,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 15069.9,
+        "fit": {
+          "best_epoch": 37,
+          "last_epoch": 39,
+          "best_valid_score": 0.1131,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
       }
     },
     "agg": {
       "overall.ndcg@10": {
-        "mean": 0.0676,
-        "std": 0.0,
+        "mean": 0.0673,
+        "std": 0.0003,
         "seeds": [
-          0.0676
+          0.0676,
+          0.067
         ]
       },
       "overall.recall@10": {
-        "mean": 0.074,
-        "std": 0.0,
+        "mean": 0.0733,
+        "std": 0.0006,
         "seeds": [
-          0.074
+          0.074,
+          0.0727
         ]
       },
       "long_tail.recall@10": {
-        "mean": 0.0254,
-        "std": 0.0,
+        "mean": 0.025,
+        "std": 0.0004,
         "seeds": [
-          0.0254
+          0.0254,
+          0.0246
         ]
       },
       "long_tail.recall@30": {
-        "mean": 0.0485,
-        "std": 0.0,
+        "mean": 0.049,
+        "std": 0.0005,
         "seeds": [
-          0.0485
+          0.0485,
+          0.0495
         ]
       },
       "coverage@10": {
-        "mean": 0.7666,
-        "std": 0.0,
+        "mean": 0.7593,
+        "std": 0.0073,
         "seeds": [
-          0.7666
+          0.7666,
+          0.752
         ]
       },
       "novelty_bits": {
-        "mean": 12.6764,
-        "std": 0.0,
+        "mean": 12.6839,
+        "std": 0.0076,
         "seeds": [
-          12.6764
+          12.6764,
+          12.6915
         ]
       },
       "best_epoch": {
-        "mean": 39.0,
+        "mean": 38.0,
         "seeds": [
-          39
+          39,
+          37
         ]
       }
     }
@@ -626,55 +840,162 @@
           "pairs": 2478824,
           "users_with_profile": 61874
         }
+      },
+      "2021": {
+        "overall": {
+          "recall@10": 0.0396,
+          "ndcg@10": 0.0362,
+          "hit@10": 0.1299,
+          "recall@30": 0.0698,
+          "ndcg@30": 0.0471,
+          "hit@30": 0.2187
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0315,
+          "ndcg@10": 0.0225,
+          "hit@10": 0.0689,
+          "recall@30": 0.0621,
+          "ndcg@30": 0.0318,
+          "hit@30": 0.1275
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0483,
+            "recall@10": 0.0615
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0441,
+            "recall@10": 0.0543
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0381,
+            "recall@10": 0.0424
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.028,
+            "recall@10": 0.028
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0218,
+            "recall@10": 0.0109
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0362,
+            "recall@10": 0.0396,
+            "recall@30": 0.0698
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.8329,
+        "novelty_bits": 15.5667,
+        "avg_rec_popularity": 975.4,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 15069.9,
+        "fit": {
+          "best_epoch": 37,
+          "last_epoch": 39,
+          "best_valid_score": 0.1131,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
       }
     },
     "agg": {
       "overall.ndcg@10": {
-        "mean": 0.0366,
-        "std": 0.0,
+        "mean": 0.0364,
+        "std": 0.0002,
         "seeds": [
-          0.0366
+          0.0366,
+          0.0362
         ]
       },
       "overall.recall@10": {
-        "mean": 0.0406,
-        "std": 0.0,
+        "mean": 0.0401,
+        "std": 0.0005,
         "seeds": [
-          0.0406
+          0.0406,
+          0.0396
         ]
       },
       "long_tail.recall@10": {
-        "mean": 0.0319,
-        "std": 0.0,
+        "mean": 0.0317,
+        "std": 0.0002,
         "seeds": [
-          0.0319
+          0.0319,
+          0.0315
         ]
       },
       "long_tail.recall@30": {
-        "mean": 0.0623,
-        "std": 0.0,
+        "mean": 0.0622,
+        "std": 0.0001,
         "seeds": [
-          0.0623
+          0.0623,
+          0.0621
         ]
       },
       "coverage@10": {
-        "mean": 0.8418,
-        "std": 0.0,
+        "mean": 0.8374,
+        "std": 0.0045,
         "seeds": [
-          0.8418
+          0.8418,
+          0.8329
         ]
       },
       "novelty_bits": {
-        "mean": 15.4758,
-        "std": 0.0,
+        "mean": 15.5213,
+        "std": 0.0455,
         "seeds": [
-          15.4758
+          15.4758,
+          15.5667
         ]
       },
       "best_epoch": {
-        "mean": 39.0,
+        "mean": 38.0,
         "seeds": [
-          39
+          39,
+          37
         ]
       }
     }
@@ -853,55 +1174,162 @@
           "pairs": 2478824,
           "users_with_profile": 61874
         }
+      },
+      "2021": {
+        "overall": {
+          "recall@10": 0.0107,
+          "ndcg@10": 0.0103,
+          "hit@10": 0.0448,
+          "recall@30": 0.023,
+          "ndcg@30": 0.0146,
+          "hit@30": 0.0862
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0274,
+          "ndcg@10": 0.0205,
+          "hit@10": 0.066,
+          "recall@30": 0.0551,
+          "ndcg@30": 0.0288,
+          "hit@30": 0.123
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0115,
+            "recall@10": 0.0161
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0103,
+            "recall@10": 0.0138
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0085,
+            "recall@10": 0.0103
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0079,
+            "recall@10": 0.008
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0132,
+            "recall@10": 0.0052
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0103,
+            "recall@10": 0.0107,
+            "recall@30": 0.023
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.503,
+        "novelty_bits": 18.4609,
+        "avg_rec_popularity": 26.6,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 15069.9,
+        "fit": {
+          "best_epoch": 37,
+          "last_epoch": 39,
+          "best_valid_score": 0.1131,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
       }
     },
     "agg": {
       "overall.ndcg@10": {
-        "mean": 0.0105,
-        "std": 0.0,
+        "mean": 0.0104,
+        "std": 0.0001,
         "seeds": [
-          0.0105
+          0.0105,
+          0.0103
         ]
       },
       "overall.recall@10": {
-        "mean": 0.0111,
-        "std": 0.0,
+        "mean": 0.0109,
+        "std": 0.0002,
         "seeds": [
-          0.0111
+          0.0111,
+          0.0107
         ]
       },
       "long_tail.recall@10": {
-        "mean": 0.0278,
-        "std": 0.0,
+        "mean": 0.0276,
+        "std": 0.0002,
         "seeds": [
-          0.0278
+          0.0278,
+          0.0274
         ]
       },
       "long_tail.recall@30": {
         "mean": 0.0552,
         "std": 0.0,
         "seeds": [
-          0.0552
+          0.0552,
+          0.0551
         ]
       },
       "coverage@10": {
-        "mean": 0.5163,
-        "std": 0.0,
+        "mean": 0.5096,
+        "std": 0.0066,
         "seeds": [
-          0.5163
+          0.5163,
+          0.503
         ]
       },
       "novelty_bits": {
-        "mean": 18.3227,
-        "std": 0.0,
+        "mean": 18.3918,
+        "std": 0.0691,
         "seeds": [
-          18.3227
+          18.3227,
+          18.4609
         ]
       },
       "best_epoch": {
-        "mean": 39.0,
+        "mean": 38.0,
         "seeds": [
-          39
+          39,
+          37
         ]
       }
     }
@@ -1072,54 +1500,161 @@
           "pairs": 2478824,
           "users_with_profile": 61874
         }
+      },
+      "2021": {
+        "overall": {
+          "recall@10": 0.0909,
+          "ndcg@10": 0.0877,
+          "hit@10": 0.3277,
+          "recall@30": 0.1701,
+          "ndcg@30": 0.1156,
+          "hit@30": 0.5155
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0096,
+          "ndcg@10": 0.0069,
+          "hit@10": 0.019,
+          "recall@30": 0.0204,
+          "ndcg@30": 0.0103,
+          "hit@30": 0.0379
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.108,
+            "recall@10": 0.1375
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0958,
+            "recall@10": 0.1162
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0866,
+            "recall@10": 0.0941
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0746,
+            "recall@10": 0.0704
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0725,
+            "recall@10": 0.0345
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0877,
+            "recall@10": 0.0909,
+            "recall@30": 0.1701
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.283,
+        "novelty_bits": 9.9698,
+        "avg_rec_popularity": 10547.0,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 19214.1,
+        "fit": {
+          "best_epoch": 39,
+          "last_epoch": 39,
+          "best_valid_score": 0.1008,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
       }
     },
     "agg": {
       "overall.ndcg@10": {
-        "mean": 0.0878,
-        "std": 0.0,
+        "mean": 0.0877,
+        "std": 0.0001,
         "seeds": [
-          0.0878
+          0.0878,
+          0.0877
         ]
       },
       "overall.recall@10": {
         "mean": 0.0909,
         "std": 0.0,
         "seeds": [
+          0.0909,
           0.0909
         ]
       },
       "long_tail.recall@10": {
-        "mean": 0.0104,
-        "std": 0.0,
+        "mean": 0.01,
+        "std": 0.0004,
         "seeds": [
-          0.0104
+          0.0104,
+          0.0096
         ]
       },
       "long_tail.recall@30": {
-        "mean": 0.0209,
-        "std": 0.0,
+        "mean": 0.0207,
+        "std": 0.0002,
         "seeds": [
-          0.0209
+          0.0209,
+          0.0204
         ]
       },
       "coverage@10": {
-        "mean": 0.2876,
-        "std": 0.0,
+        "mean": 0.2853,
+        "std": 0.0023,
         "seeds": [
-          0.2876
+          0.2876,
+          0.283
         ]
       },
       "novelty_bits": {
-        "mean": 10.0013,
-        "std": 0.0,
+        "mean": 9.9855,
+        "std": 0.0158,
         "seeds": [
-          10.0013
+          10.0013,
+          9.9698
         ]
       },
       "best_epoch": {
         "mean": 39.0,
         "seeds": [
+          39,
           39
         ]
       }
@@ -1292,54 +1827,161 @@
           "pairs": 2478824,
           "users_with_profile": 61874
         }
+      },
+      "2021": {
+        "overall": {
+          "recall@10": 0.0847,
+          "ndcg@10": 0.081,
+          "hit@10": 0.2979,
+          "recall@30": 0.1574,
+          "ndcg@30": 0.1068,
+          "hit@30": 0.4739
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0142,
+          "ndcg@10": 0.0104,
+          "hit@10": 0.0305,
+          "recall@30": 0.0303,
+          "ndcg@30": 0.0156,
+          "hit@30": 0.0622
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.103,
+            "recall@10": 0.1307
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0901,
+            "recall@10": 0.1088
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0813,
+            "recall@10": 0.0884
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0681,
+            "recall@10": 0.0643
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0617,
+            "recall@10": 0.0294
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.081,
+            "recall@10": 0.0847,
+            "recall@30": 0.1574
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.4982,
+        "novelty_bits": 10.9307,
+        "avg_rec_popularity": 7821.0,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 19214.1,
+        "fit": {
+          "best_epoch": 39,
+          "last_epoch": 39,
+          "best_valid_score": 0.1008,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
       }
     },
     "agg": {
       "overall.ndcg@10": {
-        "mean": 0.0813,
-        "std": 0.0,
+        "mean": 0.0811,
+        "std": 0.0001,
         "seeds": [
-          0.0813
+          0.0813,
+          0.081
         ]
       },
       "overall.recall@10": {
-        "mean": 0.0848,
-        "std": 0.0,
+        "mean": 0.0847,
+        "std": 0.0001,
         "seeds": [
-          0.0848
+          0.0848,
+          0.0847
         ]
       },
       "long_tail.recall@10": {
-        "mean": 0.0151,
-        "std": 0.0,
+        "mean": 0.0146,
+        "std": 0.0004,
         "seeds": [
-          0.0151
+          0.0151,
+          0.0142
         ]
       },
       "long_tail.recall@30": {
         "mean": 0.0304,
         "std": 0.0,
         "seeds": [
-          0.0304
+          0.0304,
+          0.0303
         ]
       },
       "coverage@10": {
-        "mean": 0.5036,
-        "std": 0.0,
+        "mean": 0.5009,
+        "std": 0.0027,
         "seeds": [
-          0.5036
+          0.5036,
+          0.4982
         ]
       },
       "novelty_bits": {
-        "mean": 10.9709,
-        "std": 0.0,
+        "mean": 10.9508,
+        "std": 0.0201,
         "seeds": [
-          10.9709
+          10.9709,
+          10.9307
         ]
       },
       "best_epoch": {
         "mean": 39.0,
         "seeds": [
+          39,
           39
         ]
       }
@@ -1512,54 +2154,161 @@
           "pairs": 2478824,
           "users_with_profile": 61874
         }
+      },
+      "2021": {
+        "overall": {
+          "recall@10": 0.0739,
+          "ndcg@10": 0.0694,
+          "hit@10": 0.2467,
+          "recall@30": 0.1329,
+          "ndcg@30": 0.0905,
+          "hit@30": 0.3888
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0208,
+          "ndcg@10": 0.0153,
+          "hit@10": 0.0477,
+          "recall@30": 0.0437,
+          "ndcg@30": 0.0224,
+          "hit@30": 0.0922
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0932,
+            "recall@10": 0.1176
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0808,
+            "recall@10": 0.0974
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0716,
+            "recall@10": 0.0774
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0571,
+            "recall@10": 0.0539
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0436,
+            "recall@10": 0.0215
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0694,
+            "recall@10": 0.0739,
+            "recall@30": 0.1329
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.7536,
+        "novelty_bits": 12.3931,
+        "avg_rec_popularity": 5256.3,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 19214.1,
+        "fit": {
+          "best_epoch": 39,
+          "last_epoch": 39,
+          "best_valid_score": 0.1008,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
       }
     },
     "agg": {
       "overall.ndcg@10": {
         "mean": 0.0695,
-        "std": 0.0,
+        "std": 0.0001,
         "seeds": [
-          0.0695
+          0.0695,
+          0.0694
         ]
       },
       "overall.recall@10": {
-        "mean": 0.0735,
-        "std": 0.0,
+        "mean": 0.0737,
+        "std": 0.0002,
         "seeds": [
-          0.0735
+          0.0735,
+          0.0739
         ]
       },
       "long_tail.recall@10": {
-        "mean": 0.021,
-        "std": 0.0,
+        "mean": 0.0209,
+        "std": 0.0001,
         "seeds": [
-          0.021
+          0.021,
+          0.0208
         ]
       },
       "long_tail.recall@30": {
-        "mean": 0.0433,
-        "std": 0.0,
+        "mean": 0.0435,
+        "std": 0.0002,
         "seeds": [
-          0.0433
+          0.0433,
+          0.0437
         ]
       },
       "coverage@10": {
-        "mean": 0.7613,
-        "std": 0.0,
+        "mean": 0.7574,
+        "std": 0.0038,
         "seeds": [
-          0.7613
+          0.7613,
+          0.7536
         ]
       },
       "novelty_bits": {
-        "mean": 12.4233,
-        "std": 0.0,
+        "mean": 12.4082,
+        "std": 0.0151,
         "seeds": [
-          12.4233
+          12.4233,
+          12.3931
         ]
       },
       "best_epoch": {
         "mean": 39.0,
         "seeds": [
+          39,
           39
         ]
       }
@@ -1732,54 +2481,161 @@
           "pairs": 2478824,
           "users_with_profile": 61874
         }
+      },
+      "2021": {
+        "overall": {
+          "recall@10": 0.041,
+          "ndcg@10": 0.0384,
+          "hit@10": 0.1229,
+          "recall@30": 0.0677,
+          "ndcg@30": 0.048,
+          "hit@30": 0.1893
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0259,
+          "ndcg@10": 0.0191,
+          "hit@10": 0.0598,
+          "recall@30": 0.0524,
+          "ndcg@30": 0.0272,
+          "hit@30": 0.1111
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0583,
+            "recall@10": 0.0711
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0484,
+            "recall@10": 0.0564
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.04,
+            "recall@10": 0.0424
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0272,
+            "recall@10": 0.0257
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0172,
+            "recall@10": 0.0082
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0384,
+            "recall@10": 0.041,
+            "recall@30": 0.0677
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.5939,
+        "novelty_bits": 16.0513,
+        "avg_rec_popularity": 1812.9,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 19214.1,
+        "fit": {
+          "best_epoch": 39,
+          "last_epoch": 39,
+          "best_valid_score": 0.1008,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
       }
     },
     "agg": {
       "overall.ndcg@10": {
-        "mean": 0.0393,
-        "std": 0.0,
+        "mean": 0.0388,
+        "std": 0.0005,
         "seeds": [
-          0.0393
+          0.0393,
+          0.0384
         ]
       },
       "overall.recall@10": {
-        "mean": 0.0417,
-        "std": 0.0,
+        "mean": 0.0413,
+        "std": 0.0003,
         "seeds": [
-          0.0417
+          0.0417,
+          0.041
         ]
       },
       "long_tail.recall@10": {
-        "mean": 0.0267,
-        "std": 0.0,
+        "mean": 0.0263,
+        "std": 0.0004,
         "seeds": [
-          0.0267
+          0.0267,
+          0.0259
         ]
       },
       "long_tail.recall@30": {
-        "mean": 0.0533,
-        "std": 0.0,
+        "mean": 0.0529,
+        "std": 0.0004,
         "seeds": [
-          0.0533
+          0.0533,
+          0.0524
         ]
       },
       "coverage@10": {
-        "mean": 0.6061,
-        "std": 0.0,
+        "mean": 0.6,
+        "std": 0.0061,
         "seeds": [
-          0.6061
+          0.6061,
+          0.5939
         ]
       },
       "novelty_bits": {
-        "mean": 15.9235,
-        "std": 0.0,
+        "mean": 15.9874,
+        "std": 0.0639,
         "seeds": [
-          15.9235
+          15.9235,
+          16.0513
         ]
       },
       "best_epoch": {
         "mean": 39.0,
         "seeds": [
+          39,
           39
         ]
       }

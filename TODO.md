@@ -1,4 +1,4 @@
-# TODO — Goodreads k=30 TO 실험 (2026-11-05 기준)
+# TODO — Goodreads k=30 TO 실험 (2026-11-06 기준)
 
 모든 실험은 `architect` 브랜치 + `data_bundle/`만으로 **LLM/API 호출 없이** 돌릴 수 있다.
 설계·프로토콜·현재 결과는 [`ARCHITECTURE.md`](ARCHITECTURE.md) 참고.
@@ -35,8 +35,8 @@ bash: `export PYTHONIOENCODING=utf-8 IKGR_POP_RERANK_SPECS=IKGR_kgoff,BPR,LightG
 | # | 실험 | 담당 | 상태 | 예상 시간 |
 |---|---|---|---|---|
 | 1 | seed 2020: LightGCN, IKGR_lgcn_dyn_nointent, IKGR_lgcn_dyn | 진욱 PC | ✅ 완료 (결과: `run_k30_TO/`) | — |
-| 2 | seed 2021: LightGCN | 진욱 PC | 🔄 진행 중 (11/5 19:20 종료 예정) | 5.3h |
-| 3 | seed 2021: IKGR_lgcn_dyn_nointent | 진욱 PC | ⬜ 대기 | 4.2h |
+| 2 | seed 2021: LightGCN | 진욱 PC | ✅ 완료 (11/5) | 5.3h |
+| 3 | seed 2021: IKGR_lgcn_dyn_nointent | 진욱 PC | ✅ 완료 (11/6) | 4.2h |
 | 4 | **seed 2022: IKGR_lgcn_dyn_nointent + LightGCN** | **팀원 요청 1순위** | ⬜ | 9.5h |
 | 5 | **64차원 베이스라인: BPR, IKGR_kgoff, IKGR_dyn_nointent × seed 2020·2021·2022** | **팀원 요청 2순위** | ⬜ | ~9h (추정) |
 | 6 | 재현 확인: IKGR_lgcn_dyn_nointent seed 2020 (기준값 NDCG@10 0.0871) | 팀원 (선택) | ⬜ | 4.2h |
@@ -75,6 +75,10 @@ python paired_compare.py --run_dir run_k30_TO --split TO --report     # → run_
 ```
 
 ## 3. 남은 결정 / 메모
+
+- **2 seed 결과 (11/6):** IKGR_lgcn_dyn_nointent는 LightGCN 대비 NDCG −1.4%(유의), tail recall +50%, coverage +61%.
+  seed 2020만 봤을 때의 "정확도 동률"은 성립하지 않는다. 인기도 페널티 대조군보다는 같은 tail에서 NDCG가 약 6.5% 높다.
+  자세한 표는 `ARCHITECTURE.md` 4절, 사용자 단위 비교는 `run_k30_TO/report_TO.md`.
 
 - **LLM intent:** LightGCN 백본(seed 2020)·MF 백본(3 seed) 모두 intent를 넣으면 NDCG −0.8%로 기여 없음. #8(범용 intent 제거)이 이 결론을 뒤집을 수 있는 남은 실험.
 - **40 epoch 상한:** LightGCN과 IKGR_lgcn_dyn_nointent 모두 best epoch 39 → "동일 40 epoch 예산"으로 명시. 상한 확대는 모든 모델 재실행이 필요해 보류.
