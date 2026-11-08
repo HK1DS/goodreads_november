@@ -39,9 +39,9 @@ bash: `export PYTHONIOENCODING=utf-8 IKGR_POP_RERANK_SPECS=IKGR_kgoff,BPR,LightG
 | 3 | seed 2021: IKGR_lgcn_dyn_nointent | 진욱 PC | ⬜ 대기 | 4.2h |
 | 4 | **seed 2022: IKGR_lgcn_dyn_nointent + LightGCN** | **팀원 요청 1순위** | ⬜ | 9.5h |
 | 5 | **64차원 베이스라인: BPR, IKGR_kgoff, IKGR_dyn_nointent × seed 2020·2021·2022** | **팀원 요청 2순위** | ⬜ | ~9h (추정) |
-| 6 | 재현 확인: IKGR_lgcn_dyn_nointent seed 2020 (기준값 NDCG@10 0.0871) | 팀원 (선택) | ⬜ | 4.2h |
+| 6 | 재현 확인: IKGR_lgcn_dyn_nointent seed 2020 (기준값 NDCG@10 0.0871) | 팀원 (선택, 안해도 될듯) | ⬜ | 4.2h |
 | 7 | 사용자별 구분: intent 수·카테고리(shelf) 다양성 구간별 비교 (GPU 불필요) | 진욱 | ⬜ | — |
-| 8 | intent 필터: 연결 아이템 수 상위 5/10/20% intent 제거 후 정확도 | 미정 | ⬜ 코드 준비 필요 | 비율당 1~4.5h |
+| 8 | intent 필터: 연결 아이템 수 상위 5/10/20% intent 제거 후 정확도 | 미정(~7까지 하고 괜찮은지 확인후 세부적으로 진행) | ⬜ 코드 준비 필요 | 비율당 1~4.5h |
 | 9 | late fusion λ ∈ {0, .25, .5, .75, 1}: LightGCN × IKGR_lgcn 점수 혼합 (평가만) | 미정 | ⬜ 스크립트 준비 필요 | — |
 
 ## 2. 커맨드
