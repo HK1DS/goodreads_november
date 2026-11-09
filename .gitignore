@@ -218,6 +218,7 @@ run/*
 run_k*/*
 !run_k*/*_result.json
 !run_k*/report_*.md
+!run_k*/user_segments_*.md
 !run_k*/config.yaml
 !run_k*/llm_cost_estimate.json
 
