@@ -37,7 +37,7 @@ bash: `export PYTHONIOENCODING=utf-8 IKGR_POP_RERANK_SPECS=IKGR_kgoff,BPR,LightG
 | 1 | seed 2020: LightGCN, IKGR_lgcn_dyn_nointent, IKGR_lgcn_dyn | 진욱 PC | ✅ 완료 (결과: `run_k30_TO/`) | — |
 | 2 | seed 2021: LightGCN | 진욱 PC | 🔄 진행 중 (11/5 19:20 종료 예정) | 5.3h |
 | 3 | seed 2021: IKGR_lgcn_dyn_nointent | 진욱 PC | ⬜ 대기 | 4.2h |
-| 4 | **seed 2022: IKGR_lgcn_dyn_nointent + LightGCN** | **팀원 요청 1순위** | ⬜ | 9.5h |
+| 4 | **seed 2022: IKGR_lgcn_dyn_nointent + LightGCN** | **팀원 요청 1순위** | ✅ 완료 ([결과](run_k30_TO/report_TO_seed2022.md)) | 26.3h (GTX 1060) |
 | 5 | **64차원 베이스라인: BPR, IKGR_kgoff, IKGR_dyn_nointent × seed 2020·2021·2022** | **팀원 요청 2순위** | ⬜ | ~9h (추정) |
 | 6 | 재현 확인: IKGR_lgcn_dyn_nointent seed 2020 (기준값 NDCG@10 0.0871) | 팀원 (선택, 안해도 될듯) | ⬜ | 4.2h |
 | 7 | 사용자별 구분: intent 수·카테고리(shelf) 다양성 구간별 비교 (GPU 불필요) | 진욱 | ⬜ | — |

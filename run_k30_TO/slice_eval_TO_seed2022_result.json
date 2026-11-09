@@ -1,0 +1,1788 @@
+{
+  "IKGR_lgcn_dyn_nointent": {
+    "run_signature": "319763769242752d",
+    "run_context": {
+      "schema": 3,
+      "spec": "IKGR_lgcn_dyn_nointent",
+      "model": "IKGR",
+      "split": "TO",
+      "protocol": {
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06
+      },
+      "extra": {
+        "use_kg": false,
+        "kg_cap": 32,
+        "use_meta_kg": true,
+        "meta_kg_path": "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\run_k30_TO\\meta_kg_pack.pt",
+        "use_dynamic": true,
+        "lgcn_layers": 2
+      },
+      "paths": {
+        "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+        "workdir": "run_k30_TO/",
+        "step1_output": "run_k30_TO/step1_intents.csv",
+        "step2_output": "run_k30_TO/step2_related_intents.csv",
+        "kg_triples": "run_k30_TO/kg_triples.txt",
+        "inter_file": "data/kc_k30/interactions_k30.csv",
+        "recbole_dump": "run_k30_TO/recbole/",
+        "user_bank_pt": "run_k30_TO/user_bank.pt",
+        "item_bank_pt": "run_k30_TO/item_bank.pt",
+        "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+        "kg_pack": "run_k30_TO/kg_pack.pt",
+        "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt"
+      },
+      "data_fingerprint": {
+        "profile_provenance": "8503b7bef260bb49",
+        "kg_pack": "de33d8b805a4a0d6",
+        "meta_kg_pack": "c81cd9e3417da908"
+      },
+      "recbole": {
+        "model": "IKGR",
+        "dataset": "ikgr-custom",
+        "topk": [
+          10,
+          30
+        ],
+        "metrics": [
+          "Recall",
+          "MRR",
+          "NDCG",
+          "Hit",
+          "Precision"
+        ],
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06,
+        "lambda_mix": 0.1,
+        "embedding_size": 64,
+        "gcn_layers": 1,
+        "dropout": 0.1
+      },
+      "code": {
+        "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\eval_slices.py": "a0350c7822354d07be5307615aba2279f0b3a373f43f2e8b61962dd5bcf48cbd",
+        "ikgr_core/model_ikgr.py": "22229e5625aa05bc44e067a936a3cc7a440c5491c20f791e111117b832cad1f1",
+        "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01"
+      }
+    },
+    "seeds": {
+      "2022": {
+        "overall": {
+          "recall@10": 0.0924,
+          "ndcg@10": 0.0863,
+          "hit@10": 0.3273,
+          "recall@30": 0.1759,
+          "ndcg@30": 0.1163,
+          "hit@30": 0.5269
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0161,
+          "ndcg@10": 0.0114,
+          "hit@10": 0.032,
+          "recall@30": 0.0303,
+          "ndcg@30": 0.0158,
+          "hit@30": 0.0569
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.1104,
+            "recall@10": 0.1422
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0974,
+            "recall@10": 0.1197
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0849,
+            "recall@10": 0.0958
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0715,
+            "recall@10": 0.0697
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0663,
+            "recall@10": 0.0326
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0863,
+            "recall@10": 0.0924,
+            "recall@30": 0.1759
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.4547,
+        "novelty_bits": 10.6279,
+        "avg_rec_popularity": 8604.3,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 41210.1,
+        "fit": {
+          "best_epoch": 35,
+          "last_epoch": 39,
+          "best_valid_score": 0.1122,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
+      }
+    },
+    "agg": {
+      "overall.ndcg@10": {
+        "mean": 0.0863,
+        "std": 0.0,
+        "seeds": [
+          0.0863
+        ]
+      },
+      "overall.recall@10": {
+        "mean": 0.0924,
+        "std": 0.0,
+        "seeds": [
+          0.0924
+        ]
+      },
+      "long_tail.recall@10": {
+        "mean": 0.0161,
+        "std": 0.0,
+        "seeds": [
+          0.0161
+        ]
+      },
+      "long_tail.recall@30": {
+        "mean": 0.0303,
+        "std": 0.0,
+        "seeds": [
+          0.0303
+        ]
+      },
+      "coverage@10": {
+        "mean": 0.4547,
+        "std": 0.0,
+        "seeds": [
+          0.4547
+        ]
+      },
+      "novelty_bits": {
+        "mean": 10.6279,
+        "std": 0.0,
+        "seeds": [
+          10.6279
+        ]
+      },
+      "best_epoch": {
+        "mean": 35.0,
+        "seeds": [
+          35
+        ]
+      }
+    }
+  },
+  "IKGR_lgcn_dyn_nointent_pop0p25": {
+    "run_signature": "1a0670f92a79ddda",
+    "run_context": {
+      "schema": 3,
+      "spec": "IKGR_lgcn_dyn_nointent",
+      "model": "IKGR",
+      "split": "TO",
+      "protocol": {
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06
+      },
+      "extra": {
+        "use_kg": false,
+        "kg_cap": 32,
+        "use_meta_kg": true,
+        "meta_kg_path": "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\run_k30_TO\\meta_kg_pack.pt",
+        "use_dynamic": true,
+        "lgcn_layers": 2
+      },
+      "paths": {
+        "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+        "workdir": "run_k30_TO/",
+        "step1_output": "run_k30_TO/step1_intents.csv",
+        "step2_output": "run_k30_TO/step2_related_intents.csv",
+        "kg_triples": "run_k30_TO/kg_triples.txt",
+        "inter_file": "data/kc_k30/interactions_k30.csv",
+        "recbole_dump": "run_k30_TO/recbole/",
+        "user_bank_pt": "run_k30_TO/user_bank.pt",
+        "item_bank_pt": "run_k30_TO/item_bank.pt",
+        "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+        "kg_pack": "run_k30_TO/kg_pack.pt",
+        "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt"
+      },
+      "data_fingerprint": {
+        "profile_provenance": "8503b7bef260bb49",
+        "kg_pack": "de33d8b805a4a0d6",
+        "meta_kg_pack": "c81cd9e3417da908"
+      },
+      "recbole": {
+        "model": "IKGR",
+        "dataset": "ikgr-custom",
+        "topk": [
+          10,
+          30
+        ],
+        "metrics": [
+          "Recall",
+          "MRR",
+          "NDCG",
+          "Hit",
+          "Precision"
+        ],
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06,
+        "lambda_mix": 0.1,
+        "embedding_size": 64,
+        "gcn_layers": 1,
+        "dropout": 0.1
+      },
+      "code": {
+        "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\eval_slices.py": "a0350c7822354d07be5307615aba2279f0b3a373f43f2e8b61962dd5bcf48cbd",
+        "ikgr_core/model_ikgr.py": "22229e5625aa05bc44e067a936a3cc7a440c5491c20f791e111117b832cad1f1",
+        "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01"
+      },
+      "pop_rerank_lambda": 0.25
+    },
+    "seeds": {
+      "2022": {
+        "overall": {
+          "recall@10": 0.0735,
+          "ndcg@10": 0.0674,
+          "hit@10": 0.2493,
+          "recall@30": 0.1364,
+          "ndcg@30": 0.0903,
+          "hit@30": 0.4099
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0259,
+          "ndcg@10": 0.0185,
+          "hit@10": 0.0559,
+          "recall@30": 0.0497,
+          "ndcg@30": 0.0259,
+          "hit@30": 0.1009
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0896,
+            "recall@10": 0.1145
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0794,
+            "recall@10": 0.0973
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.07,
+            "recall@10": 0.079
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.054,
+            "recall@10": 0.0532
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0431,
+            "recall@10": 0.0218
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0674,
+            "recall@10": 0.0735,
+            "recall@30": 0.1364
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.7541,
+        "novelty_bits": 12.7133,
+        "avg_rec_popularity": 4184.6,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 41210.1,
+        "fit": {
+          "best_epoch": 35,
+          "last_epoch": 39,
+          "best_valid_score": 0.1122,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
+      }
+    },
+    "agg": {
+      "overall.ndcg@10": {
+        "mean": 0.0674,
+        "std": 0.0,
+        "seeds": [
+          0.0674
+        ]
+      },
+      "overall.recall@10": {
+        "mean": 0.0735,
+        "std": 0.0,
+        "seeds": [
+          0.0735
+        ]
+      },
+      "long_tail.recall@10": {
+        "mean": 0.0259,
+        "std": 0.0,
+        "seeds": [
+          0.0259
+        ]
+      },
+      "long_tail.recall@30": {
+        "mean": 0.0497,
+        "std": 0.0,
+        "seeds": [
+          0.0497
+        ]
+      },
+      "coverage@10": {
+        "mean": 0.7541,
+        "std": 0.0,
+        "seeds": [
+          0.7541
+        ]
+      },
+      "novelty_bits": {
+        "mean": 12.7133,
+        "std": 0.0,
+        "seeds": [
+          12.7133
+        ]
+      },
+      "best_epoch": {
+        "mean": 35.0,
+        "seeds": [
+          35
+        ]
+      }
+    }
+  },
+  "IKGR_lgcn_dyn_nointent_pop0p5": {
+    "run_signature": "6febf71f06f126bd",
+    "run_context": {
+      "schema": 3,
+      "spec": "IKGR_lgcn_dyn_nointent",
+      "model": "IKGR",
+      "split": "TO",
+      "protocol": {
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06
+      },
+      "extra": {
+        "use_kg": false,
+        "kg_cap": 32,
+        "use_meta_kg": true,
+        "meta_kg_path": "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\run_k30_TO\\meta_kg_pack.pt",
+        "use_dynamic": true,
+        "lgcn_layers": 2
+      },
+      "paths": {
+        "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+        "workdir": "run_k30_TO/",
+        "step1_output": "run_k30_TO/step1_intents.csv",
+        "step2_output": "run_k30_TO/step2_related_intents.csv",
+        "kg_triples": "run_k30_TO/kg_triples.txt",
+        "inter_file": "data/kc_k30/interactions_k30.csv",
+        "recbole_dump": "run_k30_TO/recbole/",
+        "user_bank_pt": "run_k30_TO/user_bank.pt",
+        "item_bank_pt": "run_k30_TO/item_bank.pt",
+        "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+        "kg_pack": "run_k30_TO/kg_pack.pt",
+        "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt"
+      },
+      "data_fingerprint": {
+        "profile_provenance": "8503b7bef260bb49",
+        "kg_pack": "de33d8b805a4a0d6",
+        "meta_kg_pack": "c81cd9e3417da908"
+      },
+      "recbole": {
+        "model": "IKGR",
+        "dataset": "ikgr-custom",
+        "topk": [
+          10,
+          30
+        ],
+        "metrics": [
+          "Recall",
+          "MRR",
+          "NDCG",
+          "Hit",
+          "Precision"
+        ],
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06,
+        "lambda_mix": 0.1,
+        "embedding_size": 64,
+        "gcn_layers": 1,
+        "dropout": 0.1
+      },
+      "code": {
+        "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\eval_slices.py": "a0350c7822354d07be5307615aba2279f0b3a373f43f2e8b61962dd5bcf48cbd",
+        "ikgr_core/model_ikgr.py": "22229e5625aa05bc44e067a936a3cc7a440c5491c20f791e111117b832cad1f1",
+        "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01"
+      },
+      "pop_rerank_lambda": 0.5
+    },
+    "seeds": {
+      "2022": {
+        "overall": {
+          "recall@10": 0.0389,
+          "ndcg@10": 0.0356,
+          "hit@10": 0.1275,
+          "recall@30": 0.0694,
+          "ndcg@30": 0.0468,
+          "hit@30": 0.2181
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0319,
+          "ndcg@10": 0.023,
+          "hit@10": 0.0693,
+          "recall@30": 0.0626,
+          "ndcg@30": 0.0324,
+          "hit@30": 0.1285
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0483,
+            "recall@10": 0.0616
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0429,
+            "recall@10": 0.0524
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0378,
+            "recall@10": 0.0424
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0272,
+            "recall@10": 0.0267
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0213,
+            "recall@10": 0.0106
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0356,
+            "recall@10": 0.0389,
+            "recall@30": 0.0694
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.8312,
+        "novelty_bits": 15.5906,
+        "avg_rec_popularity": 965.6,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 41210.1,
+        "fit": {
+          "best_epoch": 35,
+          "last_epoch": 39,
+          "best_valid_score": 0.1122,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
+      }
+    },
+    "agg": {
+      "overall.ndcg@10": {
+        "mean": 0.0356,
+        "std": 0.0,
+        "seeds": [
+          0.0356
+        ]
+      },
+      "overall.recall@10": {
+        "mean": 0.0389,
+        "std": 0.0,
+        "seeds": [
+          0.0389
+        ]
+      },
+      "long_tail.recall@10": {
+        "mean": 0.0319,
+        "std": 0.0,
+        "seeds": [
+          0.0319
+        ]
+      },
+      "long_tail.recall@30": {
+        "mean": 0.0626,
+        "std": 0.0,
+        "seeds": [
+          0.0626
+        ]
+      },
+      "coverage@10": {
+        "mean": 0.8312,
+        "std": 0.0,
+        "seeds": [
+          0.8312
+        ]
+      },
+      "novelty_bits": {
+        "mean": 15.5906,
+        "std": 0.0,
+        "seeds": [
+          15.5906
+        ]
+      },
+      "best_epoch": {
+        "mean": 35.0,
+        "seeds": [
+          35
+        ]
+      }
+    }
+  },
+  "IKGR_lgcn_dyn_nointent_pop1p0": {
+    "run_signature": "62efde347fce717c",
+    "run_context": {
+      "schema": 3,
+      "spec": "IKGR_lgcn_dyn_nointent",
+      "model": "IKGR",
+      "split": "TO",
+      "protocol": {
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06
+      },
+      "extra": {
+        "use_kg": false,
+        "kg_cap": 32,
+        "use_meta_kg": true,
+        "meta_kg_path": "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\run_k30_TO\\meta_kg_pack.pt",
+        "use_dynamic": true,
+        "lgcn_layers": 2
+      },
+      "paths": {
+        "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+        "workdir": "run_k30_TO/",
+        "step1_output": "run_k30_TO/step1_intents.csv",
+        "step2_output": "run_k30_TO/step2_related_intents.csv",
+        "kg_triples": "run_k30_TO/kg_triples.txt",
+        "inter_file": "data/kc_k30/interactions_k30.csv",
+        "recbole_dump": "run_k30_TO/recbole/",
+        "user_bank_pt": "run_k30_TO/user_bank.pt",
+        "item_bank_pt": "run_k30_TO/item_bank.pt",
+        "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+        "kg_pack": "run_k30_TO/kg_pack.pt",
+        "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt"
+      },
+      "data_fingerprint": {
+        "profile_provenance": "8503b7bef260bb49",
+        "kg_pack": "de33d8b805a4a0d6",
+        "meta_kg_pack": "c81cd9e3417da908"
+      },
+      "recbole": {
+        "model": "IKGR",
+        "dataset": "ikgr-custom",
+        "topk": [
+          10,
+          30
+        ],
+        "metrics": [
+          "Recall",
+          "MRR",
+          "NDCG",
+          "Hit",
+          "Precision"
+        ],
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06,
+        "lambda_mix": 0.1,
+        "embedding_size": 64,
+        "gcn_layers": 1,
+        "dropout": 0.1
+      },
+      "code": {
+        "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\eval_slices.py": "a0350c7822354d07be5307615aba2279f0b3a373f43f2e8b61962dd5bcf48cbd",
+        "ikgr_core/model_ikgr.py": "22229e5625aa05bc44e067a936a3cc7a440c5491c20f791e111117b832cad1f1",
+        "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01"
+      },
+      "pop_rerank_lambda": 1.0
+    },
+    "seeds": {
+      "2022": {
+        "overall": {
+          "recall@10": 0.0108,
+          "ndcg@10": 0.0104,
+          "hit@10": 0.0447,
+          "recall@30": 0.0225,
+          "ndcg@30": 0.0144,
+          "hit@30": 0.0842
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.027,
+          "ndcg@10": 0.0204,
+          "hit@10": 0.0659,
+          "recall@30": 0.0537,
+          "ndcg@30": 0.0284,
+          "hit@30": 0.1212
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0116,
+            "recall@10": 0.0158
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0103,
+            "recall@10": 0.0139
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0086,
+            "recall@10": 0.0108
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.008,
+            "recall@10": 0.0082
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0133,
+            "recall@10": 0.0052
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0104,
+            "recall@10": 0.0108,
+            "recall@30": 0.0225
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.4897,
+        "novelty_bits": 18.4909,
+        "avg_rec_popularity": 26.3,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 41210.1,
+        "fit": {
+          "best_epoch": 35,
+          "last_epoch": 39,
+          "best_valid_score": 0.1122,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
+      }
+    },
+    "agg": {
+      "overall.ndcg@10": {
+        "mean": 0.0104,
+        "std": 0.0,
+        "seeds": [
+          0.0104
+        ]
+      },
+      "overall.recall@10": {
+        "mean": 0.0108,
+        "std": 0.0,
+        "seeds": [
+          0.0108
+        ]
+      },
+      "long_tail.recall@10": {
+        "mean": 0.027,
+        "std": 0.0,
+        "seeds": [
+          0.027
+        ]
+      },
+      "long_tail.recall@30": {
+        "mean": 0.0537,
+        "std": 0.0,
+        "seeds": [
+          0.0537
+        ]
+      },
+      "coverage@10": {
+        "mean": 0.4897,
+        "std": 0.0,
+        "seeds": [
+          0.4897
+        ]
+      },
+      "novelty_bits": {
+        "mean": 18.4909,
+        "std": 0.0,
+        "seeds": [
+          18.4909
+        ]
+      },
+      "best_epoch": {
+        "mean": 35.0,
+        "seeds": [
+          35
+        ]
+      }
+    }
+  },
+  "LightGCN": {
+    "run_signature": "dd5e3aebecc5763c",
+    "run_context": {
+      "schema": 3,
+      "spec": "LightGCN",
+      "model": "LightGCN",
+      "split": "TO",
+      "protocol": {
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06
+      },
+      "extra": {},
+      "paths": {
+        "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+        "workdir": "run_k30_TO/",
+        "step1_output": "run_k30_TO/step1_intents.csv",
+        "step2_output": "run_k30_TO/step2_related_intents.csv",
+        "kg_triples": "run_k30_TO/kg_triples.txt",
+        "inter_file": "data/kc_k30/interactions_k30.csv",
+        "recbole_dump": "run_k30_TO/recbole/",
+        "user_bank_pt": "run_k30_TO/user_bank.pt",
+        "item_bank_pt": "run_k30_TO/item_bank.pt",
+        "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+        "kg_pack": "run_k30_TO/kg_pack.pt",
+        "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt"
+      },
+      "data_fingerprint": {
+        "profile_provenance": "8503b7bef260bb49",
+        "kg_pack": "de33d8b805a4a0d6",
+        "meta_kg_pack": "c81cd9e3417da908"
+      },
+      "recbole": {
+        "model": "IKGR",
+        "dataset": "ikgr-custom",
+        "topk": [
+          10,
+          30
+        ],
+        "metrics": [
+          "Recall",
+          "MRR",
+          "NDCG",
+          "Hit",
+          "Precision"
+        ],
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06,
+        "lambda_mix": 0.1,
+        "embedding_size": 64,
+        "gcn_layers": 1,
+        "dropout": 0.1
+      },
+      "code": {
+        "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\eval_slices.py": "a0350c7822354d07be5307615aba2279f0b3a373f43f2e8b61962dd5bcf48cbd",
+        "ikgr_core/model_ikgr.py": "22229e5625aa05bc44e067a936a3cc7a440c5491c20f791e111117b832cad1f1",
+        "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01"
+      }
+    },
+    "seeds": {
+      "2022": {
+        "overall": {
+          "recall@10": 0.0907,
+          "ndcg@10": 0.0879,
+          "hit@10": 0.3259,
+          "recall@30": 0.17,
+          "ndcg@30": 0.1159,
+          "hit@30": 0.5143
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0101,
+          "ndcg@10": 0.0072,
+          "hit@10": 0.0192,
+          "recall@30": 0.0207,
+          "ndcg@30": 0.0106,
+          "hit@30": 0.0378
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.108,
+            "recall@10": 0.136
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0964,
+            "recall@10": 0.1156
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.087,
+            "recall@10": 0.095
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0749,
+            "recall@10": 0.0706
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0726,
+            "recall@10": 0.0346
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0879,
+            "recall@10": 0.0907,
+            "recall@30": 0.17
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.284,
+        "novelty_bits": 10.0148,
+        "avg_rec_popularity": 10409.0,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 52923.5,
+        "fit": {
+          "best_epoch": 39,
+          "last_epoch": 39,
+          "best_valid_score": 0.1007,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
+      }
+    },
+    "agg": {
+      "overall.ndcg@10": {
+        "mean": 0.0879,
+        "std": 0.0,
+        "seeds": [
+          0.0879
+        ]
+      },
+      "overall.recall@10": {
+        "mean": 0.0907,
+        "std": 0.0,
+        "seeds": [
+          0.0907
+        ]
+      },
+      "long_tail.recall@10": {
+        "mean": 0.0101,
+        "std": 0.0,
+        "seeds": [
+          0.0101
+        ]
+      },
+      "long_tail.recall@30": {
+        "mean": 0.0207,
+        "std": 0.0,
+        "seeds": [
+          0.0207
+        ]
+      },
+      "coverage@10": {
+        "mean": 0.284,
+        "std": 0.0,
+        "seeds": [
+          0.284
+        ]
+      },
+      "novelty_bits": {
+        "mean": 10.0148,
+        "std": 0.0,
+        "seeds": [
+          10.0148
+        ]
+      },
+      "best_epoch": {
+        "mean": 39.0,
+        "seeds": [
+          39
+        ]
+      }
+    }
+  },
+  "LightGCN_pop0p25": {
+    "run_signature": "61df33286a0cf209",
+    "run_context": {
+      "schema": 3,
+      "spec": "LightGCN",
+      "model": "LightGCN",
+      "split": "TO",
+      "protocol": {
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06
+      },
+      "extra": {},
+      "paths": {
+        "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+        "workdir": "run_k30_TO/",
+        "step1_output": "run_k30_TO/step1_intents.csv",
+        "step2_output": "run_k30_TO/step2_related_intents.csv",
+        "kg_triples": "run_k30_TO/kg_triples.txt",
+        "inter_file": "data/kc_k30/interactions_k30.csv",
+        "recbole_dump": "run_k30_TO/recbole/",
+        "user_bank_pt": "run_k30_TO/user_bank.pt",
+        "item_bank_pt": "run_k30_TO/item_bank.pt",
+        "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+        "kg_pack": "run_k30_TO/kg_pack.pt",
+        "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt"
+      },
+      "data_fingerprint": {
+        "profile_provenance": "8503b7bef260bb49",
+        "kg_pack": "de33d8b805a4a0d6",
+        "meta_kg_pack": "c81cd9e3417da908"
+      },
+      "recbole": {
+        "model": "IKGR",
+        "dataset": "ikgr-custom",
+        "topk": [
+          10,
+          30
+        ],
+        "metrics": [
+          "Recall",
+          "MRR",
+          "NDCG",
+          "Hit",
+          "Precision"
+        ],
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06,
+        "lambda_mix": 0.1,
+        "embedding_size": 64,
+        "gcn_layers": 1,
+        "dropout": 0.1
+      },
+      "code": {
+        "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\eval_slices.py": "a0350c7822354d07be5307615aba2279f0b3a373f43f2e8b61962dd5bcf48cbd",
+        "ikgr_core/model_ikgr.py": "22229e5625aa05bc44e067a936a3cc7a440c5491c20f791e111117b832cad1f1",
+        "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01"
+      },
+      "pop_rerank_lambda": 0.25
+    },
+    "seeds": {
+      "2022": {
+        "overall": {
+          "recall@10": 0.0844,
+          "ndcg@10": 0.0811,
+          "hit@10": 0.2954,
+          "recall@30": 0.1563,
+          "ndcg@30": 0.1066,
+          "hit@30": 0.4697
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0145,
+          "ndcg@10": 0.0106,
+          "hit@10": 0.0304,
+          "recall@30": 0.0304,
+          "ndcg@30": 0.0157,
+          "hit@30": 0.0616
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.1033,
+            "recall@10": 0.1296
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0908,
+            "recall@10": 0.1083
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0815,
+            "recall@10": 0.0886
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0681,
+            "recall@10": 0.0645
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0612,
+            "recall@10": 0.0295
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0811,
+            "recall@10": 0.0844,
+            "recall@30": 0.1563
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.5002,
+        "novelty_bits": 10.9881,
+        "avg_rec_popularity": 7683.3,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 52923.5,
+        "fit": {
+          "best_epoch": 39,
+          "last_epoch": 39,
+          "best_valid_score": 0.1007,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
+      }
+    },
+    "agg": {
+      "overall.ndcg@10": {
+        "mean": 0.0811,
+        "std": 0.0,
+        "seeds": [
+          0.0811
+        ]
+      },
+      "overall.recall@10": {
+        "mean": 0.0844,
+        "std": 0.0,
+        "seeds": [
+          0.0844
+        ]
+      },
+      "long_tail.recall@10": {
+        "mean": 0.0145,
+        "std": 0.0,
+        "seeds": [
+          0.0145
+        ]
+      },
+      "long_tail.recall@30": {
+        "mean": 0.0304,
+        "std": 0.0,
+        "seeds": [
+          0.0304
+        ]
+      },
+      "coverage@10": {
+        "mean": 0.5002,
+        "std": 0.0,
+        "seeds": [
+          0.5002
+        ]
+      },
+      "novelty_bits": {
+        "mean": 10.9881,
+        "std": 0.0,
+        "seeds": [
+          10.9881
+        ]
+      },
+      "best_epoch": {
+        "mean": 39.0,
+        "seeds": [
+          39
+        ]
+      }
+    }
+  },
+  "LightGCN_pop0p5": {
+    "run_signature": "610b82f39f27ebef",
+    "run_context": {
+      "schema": 3,
+      "spec": "LightGCN",
+      "model": "LightGCN",
+      "split": "TO",
+      "protocol": {
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06
+      },
+      "extra": {},
+      "paths": {
+        "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+        "workdir": "run_k30_TO/",
+        "step1_output": "run_k30_TO/step1_intents.csv",
+        "step2_output": "run_k30_TO/step2_related_intents.csv",
+        "kg_triples": "run_k30_TO/kg_triples.txt",
+        "inter_file": "data/kc_k30/interactions_k30.csv",
+        "recbole_dump": "run_k30_TO/recbole/",
+        "user_bank_pt": "run_k30_TO/user_bank.pt",
+        "item_bank_pt": "run_k30_TO/item_bank.pt",
+        "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+        "kg_pack": "run_k30_TO/kg_pack.pt",
+        "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt"
+      },
+      "data_fingerprint": {
+        "profile_provenance": "8503b7bef260bb49",
+        "kg_pack": "de33d8b805a4a0d6",
+        "meta_kg_pack": "c81cd9e3417da908"
+      },
+      "recbole": {
+        "model": "IKGR",
+        "dataset": "ikgr-custom",
+        "topk": [
+          10,
+          30
+        ],
+        "metrics": [
+          "Recall",
+          "MRR",
+          "NDCG",
+          "Hit",
+          "Precision"
+        ],
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06,
+        "lambda_mix": 0.1,
+        "embedding_size": 64,
+        "gcn_layers": 1,
+        "dropout": 0.1
+      },
+      "code": {
+        "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\eval_slices.py": "a0350c7822354d07be5307615aba2279f0b3a373f43f2e8b61962dd5bcf48cbd",
+        "ikgr_core/model_ikgr.py": "22229e5625aa05bc44e067a936a3cc7a440c5491c20f791e111117b832cad1f1",
+        "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01"
+      },
+      "pop_rerank_lambda": 0.5
+    },
+    "seeds": {
+      "2022": {
+        "overall": {
+          "recall@10": 0.0734,
+          "ndcg@10": 0.0694,
+          "hit@10": 0.2434,
+          "recall@30": 0.1316,
+          "ndcg@30": 0.0901,
+          "hit@30": 0.3849
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0208,
+          "ndcg@10": 0.0154,
+          "hit@10": 0.0473,
+          "recall@30": 0.0434,
+          "ndcg@30": 0.0224,
+          "hit@30": 0.0919
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0944,
+            "recall@10": 0.1176
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0802,
+            "recall@10": 0.0958
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0713,
+            "recall@10": 0.0769
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.057,
+            "recall@10": 0.0538
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0431,
+            "recall@10": 0.0214
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.0694,
+            "recall@10": 0.0734,
+            "recall@30": 0.1316
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.7596,
+        "novelty_bits": 12.4458,
+        "avg_rec_popularity": 5170.7,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 52923.5,
+        "fit": {
+          "best_epoch": 39,
+          "last_epoch": 39,
+          "best_valid_score": 0.1007,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
+      }
+    },
+    "agg": {
+      "overall.ndcg@10": {
+        "mean": 0.0694,
+        "std": 0.0,
+        "seeds": [
+          0.0694
+        ]
+      },
+      "overall.recall@10": {
+        "mean": 0.0734,
+        "std": 0.0,
+        "seeds": [
+          0.0734
+        ]
+      },
+      "long_tail.recall@10": {
+        "mean": 0.0208,
+        "std": 0.0,
+        "seeds": [
+          0.0208
+        ]
+      },
+      "long_tail.recall@30": {
+        "mean": 0.0434,
+        "std": 0.0,
+        "seeds": [
+          0.0434
+        ]
+      },
+      "coverage@10": {
+        "mean": 0.7596,
+        "std": 0.0,
+        "seeds": [
+          0.7596
+        ]
+      },
+      "novelty_bits": {
+        "mean": 12.4458,
+        "std": 0.0,
+        "seeds": [
+          12.4458
+        ]
+      },
+      "best_epoch": {
+        "mean": 39.0,
+        "seeds": [
+          39
+        ]
+      }
+    }
+  },
+  "LightGCN_pop1p0": {
+    "run_signature": "0d55e6091e7c8b60",
+    "run_context": {
+      "schema": 3,
+      "spec": "LightGCN",
+      "model": "LightGCN",
+      "split": "TO",
+      "protocol": {
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06
+      },
+      "extra": {},
+      "paths": {
+        "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+        "workdir": "run_k30_TO/",
+        "step1_output": "run_k30_TO/step1_intents.csv",
+        "step2_output": "run_k30_TO/step2_related_intents.csv",
+        "kg_triples": "run_k30_TO/kg_triples.txt",
+        "inter_file": "data/kc_k30/interactions_k30.csv",
+        "recbole_dump": "run_k30_TO/recbole/",
+        "user_bank_pt": "run_k30_TO/user_bank.pt",
+        "item_bank_pt": "run_k30_TO/item_bank.pt",
+        "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+        "kg_pack": "run_k30_TO/kg_pack.pt",
+        "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt"
+      },
+      "data_fingerprint": {
+        "profile_provenance": "8503b7bef260bb49",
+        "kg_pack": "de33d8b805a4a0d6",
+        "meta_kg_pack": "c81cd9e3417da908"
+      },
+      "recbole": {
+        "model": "IKGR",
+        "dataset": "ikgr-custom",
+        "topk": [
+          10,
+          30
+        ],
+        "metrics": [
+          "Recall",
+          "MRR",
+          "NDCG",
+          "Hit",
+          "Precision"
+        ],
+        "epochs": 40,
+        "eval_step": 2,
+        "stopping_step": 3,
+        "valid_metric": "NDCG@10",
+        "learning_rate": 0.001,
+        "reg_weight": 1e-06,
+        "lambda_mix": 0.1,
+        "embedding_size": 64,
+        "gcn_layers": 1,
+        "dropout": 0.1
+      },
+      "code": {
+        "D:\\세하\\사피밍\\코딩\\hk1ds_ercnard_amzn_clothing\\data\\goodreads_november\\eval_slices.py": "a0350c7822354d07be5307615aba2279f0b3a373f43f2e8b61962dd5bcf48cbd",
+        "ikgr_core/model_ikgr.py": "22229e5625aa05bc44e067a936a3cc7a440c5491c20f791e111117b832cad1f1",
+        "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01"
+      },
+      "pop_rerank_lambda": 1.0
+    },
+    "seeds": {
+      "2022": {
+        "overall": {
+          "recall@10": 0.0404,
+          "ndcg@10": 0.038,
+          "hit@10": 0.1209,
+          "recall@30": 0.067,
+          "ndcg@30": 0.0476,
+          "hit@30": 0.1872
+        },
+        "n_test_users": 62142,
+        "long_tail": {
+          "head_cut_pop": 139.0,
+          "n_tail_items": 22391,
+          "n_users_with_tail_rel": 37746,
+          "recall@10": 0.0257,
+          "ndcg@10": 0.019,
+          "hit@10": 0.0585,
+          "recall@30": 0.0516,
+          "ndcg@30": 0.0269,
+          "hit@30": 0.1094
+        },
+        "cold_start_buckets": {
+          "Q1_cold": {
+            "n_users": 12496,
+            "ndcg@10": 0.0582,
+            "recall@10": 0.0704
+          },
+          "Q2": {
+            "n_users": 12820,
+            "ndcg@10": 0.0475,
+            "recall@10": 0.0551
+          },
+          "Q3": {
+            "n_users": 12344,
+            "ndcg@10": 0.0392,
+            "recall@10": 0.0416
+          },
+          "Q4": {
+            "n_users": 12069,
+            "ndcg@10": 0.0271,
+            "recall@10": 0.0255
+          },
+          "Q5_warm": {
+            "n_users": 12413,
+            "ndcg@10": 0.0173,
+            "recall@10": 0.0083
+          }
+        },
+        "cold_abs_buckets": {
+          "cold0_train": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_1_5": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "cold_6_20": {
+            "n_users": 0,
+            "ndcg@10": 0.0,
+            "recall@10": 0.0,
+            "recall@30": 0.0
+          },
+          "warm_gt20": {
+            "n_users": 62142,
+            "ndcg@10": 0.038,
+            "recall@10": 0.0404,
+            "recall@30": 0.067
+          }
+        },
+        "activity_q_20_40_60_80": [
+          30.0,
+          39.0,
+          54.0,
+          89.0
+        ],
+        "coverage@10": 0.5995,
+        "novelty_bits": 16.0466,
+        "avg_rec_popularity": 1792.7,
+        "definitions": {
+          "activity": "train interactions",
+          "popularity": "train interactions"
+        },
+        "train_sec": 52923.5,
+        "fit": {
+          "best_epoch": 39,
+          "last_epoch": 39,
+          "best_valid_score": 0.1007,
+          "max_epochs": 40
+        },
+        "leakage_guard": {
+          "verified": true,
+          "pairs": 2478824,
+          "users_with_profile": 61874
+        }
+      }
+    },
+    "agg": {
+      "overall.ndcg@10": {
+        "mean": 0.038,
+        "std": 0.0,
+        "seeds": [
+          0.038
+        ]
+      },
+      "overall.recall@10": {
+        "mean": 0.0404,
+        "std": 0.0,
+        "seeds": [
+          0.0404
+        ]
+      },
+      "long_tail.recall@10": {
+        "mean": 0.0257,
+        "std": 0.0,
+        "seeds": [
+          0.0257
+        ]
+      },
+      "long_tail.recall@30": {
+        "mean": 0.0516,
+        "std": 0.0,
+        "seeds": [
+          0.0516
+        ]
+      },
+      "coverage@10": {
+        "mean": 0.5995,
+        "std": 0.0,
+        "seeds": [
+          0.5995
+        ]
+      },
+      "novelty_bits": {
+        "mean": 16.0466,
+        "std": 0.0,
+        "seeds": [
+          16.0466
+        ]
+      },
+      "best_epoch": {
+        "mean": 39.0,
+        "seeds": [
+          39
+        ]
+      }
+    }
+  }
+}
