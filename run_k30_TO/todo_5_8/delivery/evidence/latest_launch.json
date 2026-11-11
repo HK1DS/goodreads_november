@@ -1,0 +1,12 @@
+{
+  "pid": 20180,
+  "started": "2026-11-10T05:30:51.011195+09:00",
+  "stdout": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\formal-resume-20261110-053050.stdout.log",
+  "stderr": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\formal-resume-20261110-053050.stderr.log",
+  "repo": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo",
+  "python": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\venv\\Scripts\\python.exe",
+  "resume": true,
+  "breakaway_from_job": true,
+  "completed_fits_preserved": 12,
+  "incomplete_fit_restarted": "IKGR_dyn_filter5 seed 2020 (no pause checkpoint)"
+}

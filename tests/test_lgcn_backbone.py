@@ -50,6 +50,7 @@ def data(tmp_path_factory):
         cd["show_progress"] = False
         cd["device"] = "cpu"
         cd["use_gpu"] = False
+        cd["gpu_id"] = ""  # RecBole 1.2.0 selects the device from gpu_id.
         config = Config(model=model, dataset="ikgr-custom", config_dict=cd)
         ds = create_dataset(config)
         train, valid, test = data_preparation(config, ds)
@@ -120,3 +121,34 @@ def test_facet_variant_trains(data):
     cfg_c, _, train_c = data(IKGR, {"use_kg": False, "lgcn_layers": 2, "use_corona": True})
     with pytest.raises(ValueError):
         IKGR(cfg_c, train_c.dataset)
+
+
+def test_intent_zero_identity_and_empty_filtered_rows(data, tmp_path):
+    from ikgr_core.model_ikgr import IKGR
+    cfg, ds, train = data(IKGR, {"use_kg": False})
+    kg_path = tmp_path / "tiny_kg.pt"
+    torch.save({"n_intents": 2, "intent_emb": torch.arange(32).reshape(2,16).float(),
+                "user_intents": {str(t):torch.tensor([0,1]) for t in ds.field2id_token[cfg["USER_ID_FIELD"]][1:]},
+                "item_intents": {str(t):torch.tensor([0,1]) for t in ds.field2id_token[cfg["ITEM_ID_FIELD"]][1:]}}, kg_path)
+    cfg["use_kg"] = True
+    cfg["kg_pack_path"] = str(kg_path)
+    cfg["intent_learnable"] = False
+    torch.manual_seed(7)
+    original = IKGR(cfg, train.dataset)
+    cfg["intent_filter_top_pct"] = 0
+    torch.manual_seed(7)
+    zero = IKGR(cfg, train.dataset)
+    assert all(torch.equal(value, zero.state_dict()[key]) for key,value in original.state_dict().items())
+    batch = next(iter(train))
+    original.eval(); zero.eval()
+    with torch.no_grad():
+        assert torch.equal(original.full_sort_predict(batch), zero.full_sort_predict(batch))
+    cfg["intent_filter_top_pct"] = 100
+    torch.manual_seed(7)
+    empty = IKGR(cfg, train.dataset)
+    assert not empty.user_intent_mask.any() and not empty.item_intent_mask.any()
+    assert torch.equal(original.intent_embedding.weight, empty.intent_embedding.weight)
+    loss = empty.calculate_loss(batch)
+    assert torch.isfinite(loss)
+    loss.backward()
+    assert torch.isfinite(empty.user_embedding.weight.grad).all()

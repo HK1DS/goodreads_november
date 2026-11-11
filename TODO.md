@@ -1,4 +1,4 @@
-# TODO — Goodreads k=30 TO 실험 (2026-11-05 기준)
+# TODO — Goodreads k=30 TO 실험 (2026-11-11 기준 (#5·#8 반영))
 
 모든 실험은 `architect` 브랜치 + `data_bundle/`만으로 **LLM/API 호출 없이** 돌릴 수 있다.
 설계·프로토콜·현재 결과는 [`ARCHITECTURE.md`](ARCHITECTURE.md) 참고.
@@ -38,11 +38,15 @@ bash: `export PYTHONIOENCODING=utf-8 IKGR_POP_RERANK_SPECS=IKGR_kgoff,BPR,LightG
 | 2 | seed 2021: LightGCN | 진욱 PC | 🔄 진행 중 (11/5 19:20 종료 예정) | 5.3h |
 | 3 | seed 2021: IKGR_lgcn_dyn_nointent | 진욱 PC | ⬜ 대기 | 4.2h |
 | 4 | **seed 2022: IKGR_lgcn_dyn_nointent + LightGCN** | **팀원 요청 1순위** | ✅ 완료 ([결과](run_k30_TO/report_TO_seed2022.md)) | 26.3h (GTX 1060) |
-| 5 | **64차원 베이스라인: BPR, IKGR_kgoff, IKGR_dyn_nointent × seed 2020·2021·2022** | **팀원 요청 2순위** | ⬜ | ~9h (추정) |
+| 5 | **64차원 베이스라인: BPR, IKGR_kgoff, IKGR_dyn_nointent × seed 2020·2021·2022** | 팀원 | ✅ 완료 (11/10, 9회; [결과](run_k30_TO/todo_5_8/README.md)) | 실측은 결과 참조 |
 | 6 | 재현 확인: IKGR_lgcn_dyn_nointent seed 2020 (기준값 NDCG@10 0.0871) | 팀원 (선택, 안해도 될듯) | ⬜ | 4.2h |
 | 7 | 사용자별 구분: intent 수·카테고리(shelf) 다양성 구간별 비교 (GPU 불필요) | 진욱 | ⬜ | — |
-| 8 | intent 필터: 연결 아이템 수 상위 5/10/20% intent 제거 후 정확도 | 미정(~7까지 하고 괜찮은지 확인후 세부적으로 진행) | ⬜ 코드 준비 필요 | 비율당 1~4.5h |
+| 8 | MF IKGR_dyn: 연결 아이템 수 상위 0/5/10/20% intent 제거 × 3 seed | 팀원 | ✅ 완료 (11/10, 12회; [결과](run_k30_TO/todo_5_8/README.md)) | #5와 합계 약 6h14m |
 | 9 | late fusion λ ∈ {0, .25, .5, .75, 1}: LightGCN × IKGR_lgcn 점수 혼합 (평가만) | 미정 | ⬜ 스크립트 준비 필요 | — |
+
+## #5·#8 완료 결과
+
+[상세 보고서](run_k30_TO/todo_5_8/README.md): MF 64d, 3 seed, 21회 학습 완료. 대표 intent 제거율은 validation 기준 5%; no-intent 대비 NDCG 우위는 확인되지 않았다. 기존 LightGCN 결과와 분리 보관한다. 재현은 `configs/todo_5_8.yaml`과 `scripts/run_todo_5_8.py`를 사용하며 아래 일반 실행 예와 평가 배치 설정을 구분한다.
 
 ## 2. 커맨드
 

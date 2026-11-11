@@ -1,0 +1,1298 @@
+diff --git a/eval_slices.py b/eval_slices.py
+--- a/eval_slices.py
++++ b/eval_slices.py
+@@ -32,7 +32,9 @@
+   IKGR_DUMP_VALID=1               also dump per-user VALIDATION metrics (for gate/selection work)
+   IKGR_REQUIRE_PROVENANCE=1       refuse to run KG specs without a profile provenance file
+ """
+-import os, json, time, math, yaml, hashlib, random
++import os, json, time, math, yaml, hashlib, random, platform
++import recbole
++import scipy
+ import scipy.sparse as _sp
+ if not hasattr(_sp.dok_matrix, "_update"):
+     # RecBole 1.2.0 builds LightGCN's normalized adjacency with dok_matrix._update(),
+@@ -54,11 +56,13 @@
+ from recbole.data import create_dataset, data_preparation
+ from recbole.utils import get_model, get_trainer, init_seed
+ from ikgr_core.model_ikgr import IKGR as IKGRModel
++from ikgr_core.pause_resume import Control, PauseRequested, PAUSED_EXIT, fit_with_pause
+ 
+ KS = [10, 30]
+ MAXK = max(KS)
+ COV_K = 10
+-EVAL_SCHEMA_VERSION = 3   # 3: train-only pop/activity, early stopping, leakage guard
++EVAL_SCHEMA_VERSION = 5   # request-only epoch-boundary pause/resume
++PROCESS_HASH_SEED = os.environ.get("PYTHONHASHSEED")
+ 
+ 
+ def _set_determinism(seed):
+@@ -109,7 +113,8 @@
+ 
+ def _experiment_context(name, model_arg, extra, rb, paths, split):
+     """Fingerprint evaluation inputs so stale seed results cannot be reused."""
+-    source_paths = [__file__, "ikgr_core/model_ikgr.py", "ikgr_core/corona_retriever.py"]
++    source_paths = [__file__, "ikgr_core/model_ikgr.py", "ikgr_core/corona_retriever.py", "ikgr_core/intent_filter.py",
++                    "ikgr_core/pause_resume.py", "scripts/run_todo_5_8.py"]
+     code = {}
+     for path in source_paths:
+         try:
+@@ -124,6 +129,11 @@
+         p = paths.get(key)
+         if p and os.path.exists(p):
+             data_fp[key] = _file_sha256(p)
++    atomic = os.path.join(os.path.dirname(paths["inter_file"]), rb["dataset"], rb["dataset"] + ".inter")
++    if os.path.exists(atomic):
++        data_fp["atomic_inter"] = _file_sha256(atomic)
++    if paths.get("profile_provenance") and os.path.exists(paths["profile_provenance"] + ".meta.json"):
++        data_fp["provenance_meta"] = _file_sha256(paths["profile_provenance"] + ".meta.json")
+     context = {
+         "schema": EVAL_SCHEMA_VERSION,
+         "spec": name,
+@@ -135,6 +145,12 @@
+         "data_fingerprint": data_fp,
+         "recbole": rb,
+         "code": code,
++        "runtime": {"torch": torch.__version__, "cuda": torch.version.cuda,
++                    "python": platform.python_version(), "recbole": recbole.__version__,
++                    "numpy": np.__version__, "scipy": scipy.__version__, "pandas": pd.__version__,
++                    "process_hash_seed": PROCESS_HASH_SEED,
++                    "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() and torch.cuda.device_count() > 0 else None,
++                    "torch_threads": torch.get_num_threads()},
+     }
+     encoded = json.dumps(context, sort_keys=True, ensure_ascii=True, default=str).encode("utf-8")
+     return hashlib.sha256(encoded).hexdigest()[:16], context
+@@ -187,7 +203,44 @@
+         cd["eval_args"] = {"split": {"RS": [0.7, 0.1, 0.2]}, "order": "TO",
+                            "group_by": None, "mode": "full"}
+     cd.update(extra)
++    for key in ("train_batch_size", "eval_batch_size", "eval_users_per_batch", "worker", "gpu_id", "require_cuda"):
++        if key in rb:
++            cd[key] = rb[key]
+     return cd
++
++
++def _configure_eval_batch(config, dataset):
++    """RecBole's full-sort eval_batch_size counts user-item scores, not users."""
++    users = config["eval_users_per_batch"]
++    if users is not None:
++        if isinstance(users, bool) or int(users) != users or users < 1:
++            raise ValueError("eval_users_per_batch must be a positive integer")
++        config["eval_batch_size"] = int(users) * int(dataset.item_num)
++    if config["require_cuda"] and config["device"].type != "cuda":
++        raise RuntimeError("CUDA is required for this experiment; CPU fallback is disabled")
++
++
++def _seed_complete(results, names, seed, pu_dir, dump_valid):
++    phases = ("test", "valid") if dump_valid else ("test",)
++    for name in names:
++        result = results[name]["seeds"].get(str(seed))
++        if result is None or not all(os.path.isfile(os.path.join(pu_dir, f"{name}__s{seed}__{phase}.csv.gz")) for phase in phases):
++            return False
++        if result.get("intent_filter"):
++            ref = result["intent_filter"]
++            path = os.path.join(os.path.dirname(pu_dir), ref["file"])
++            if not os.path.isfile(path) or _file_sha256(path) != ref["sha256"]:
++                return False
++    return True
++
++
++def _atomic_json(path, value):
++    temporary = str(path) + ".tmp"
++    with open(temporary, "w", encoding="utf-8") as f:
++        json.dump(value, f, ensure_ascii=False, indent=2)
++        f.flush()
++        os.fsync(f.fileno())
++    os.replace(temporary, path)
+ 
+ 
+ def _build_recency(model, train_data, config):
+@@ -365,7 +418,7 @@
+     return per_user, cand_stats
+ 
+ 
+-def _train_and_collect(model_arg, extra, rb, paths, seed, split):
++def _train_and_collect(model_arg, extra, rb, paths, seed, split, resume_context=None):
+     _set_determinism(seed)
+     extra = dict(extra)
+     # Eval-only knobs (candidate restriction / reranking): not model parameters.
+@@ -381,6 +434,7 @@
+     os.makedirs(cfg_dict["checkpoint_dir"], exist_ok=True)
+     config = Config(model=model_arg, dataset=rb["dataset"], config_dict=cfg_dict)
+     dataset = create_dataset(config)
++    _configure_eval_batch(config, dataset)
+     train_data, valid_data, test_data = data_preparation(config, dataset)
+     guard = _check_profile_leakage(paths, guard_extra, train_data, config, split)
+     item_pop, user_act = _train_stats(train_data, config)
+@@ -410,10 +464,20 @@
+ 
+     def _cb(epoch_idx, valid_score):
+         fit_info["last_epoch"] = int(epoch_idx)
+-    t0 = time.time()
+-    best_score, best_result = trainer.fit(train_data, valid_data, saved=True, show_progress=False,
+-                                          callback_fn=_cb)
+-    train_sec = round(time.time() - t0, 1)
++    try:
++        if resume_context is not None:
++            identity = resume_context["identity"]
++            trainer.saved_model_file = os.path.join(cfg_dict["checkpoint_dir"], f'{identity["spec"]}__s{seed}_best.pth')
++            (best_score, best_result), elapsed = fit_with_pause(
++                trainer, train_data, valid_data, test_data, fit_info, **resume_context)
++            train_sec = round(elapsed, 1)
++        else:
++            t0 = time.time()
++            best_score, best_result = trainer.fit(train_data, valid_data, saved=True, show_progress=False,
++                                                  callback_fn=_cb)
++            train_sec = round(time.time() - t0, 1)
++    finally:
++        trainer.tensorboard.close()
+     fit_info["best_valid_score"] = None if best_score is None else float(best_score)
+     fit_info["max_epochs"] = int(config["epochs"])
+     smf = getattr(trainer, "saved_model_file", None)
+@@ -445,7 +509,10 @@
+     uid_tokens = dataset.field2id_token[config["USER_ID_FIELD"]]
+     return {"test": test_pu, "valid": valid_pu, "item_pop": item_pop, "train_sec": train_sec,
+             "n_items": n_items, "cand_stats": cand_stats, "fit": fit_info, "guard": guard,
+-            "uid_tokens": uid_tokens}
++            "uid_tokens": uid_tokens, "intent_filter": getattr(model, "intent_filter_stats", None),
++            "execution": {"device": str(config["device"]), "train_batch_size": config["train_batch_size"],
++                          "eval_batch_size": config["eval_batch_size"], "eval_users_per_batch": valid_data.step,
++                          "n_items_including_padding": n_items}}
+ 
+ 
+ def _user_metrics(topk, rel_set, k):
+@@ -592,7 +659,7 @@
+ def build_specs(paths):
+     kg = os.path.abspath(paths.get("kg_pack", "run/kg_pack.pt"))
+     meta = os.path.abspath(paths.get("meta_kg_pack", "run/meta_kg_pack.pt"))
+-    return {
++    specs = {
+         "IKGR_kgoff":   (IKGRModel, {"use_kg": False}),
+         "IKGR_kgon_L1": (IKGRModel, {"use_kg": True, "kg_pack_path": kg, "kg_layers": 1, "kg_cap": 32}),
+         "IKGR_kgon_L1_frozen": (IKGRModel, {"use_kg": True, "kg_pack_path": kg, "kg_layers": 1,
+@@ -645,6 +712,10 @@
+         "BPR":          ("BPR", {}),
+         "LightGCN":     ("LightGCN", {}),
+     }
++    for pct in (5, 10, 20):
++        model, extra = specs["IKGR_dyn"]
++        specs[f"IKGR_dyn_filter{pct}"] = (model, dict(extra, intent_filter_top_pct=pct))
++    return specs
+ 
+ 
+ def main():
+@@ -664,6 +735,7 @@
+     pu_dir = os.path.join(wd, f"per_user_{split}")
+     os.makedirs(pu_dir, exist_ok=True)
+     results = json.load(open(out_path, encoding="utf-8")) if os.path.exists(out_path) else {}
++    control = Control(os.environ["IKGR_CONTROL_DIR"]) if os.environ.get("IKGR_CONTROL_DIR") else None
+ 
+     for name in spec_names:
+         model_arg, extra = all_specs[name]
+@@ -684,15 +756,33 @@
+                     print(f"[invalidate] {rname}: evaluation inputs changed", flush=True)
+                 results[rname] = {"run_signature": sig, "run_context": ctx, "seeds": {}}
+         for seed in seeds:
+-            if all(str(seed) in results[r]["seeds"] for r in result_names.values()):
++            if control:
++                control.boundary()
++            if _seed_complete(results, result_names.values(), seed, pu_dir, os.environ.get("IKGR_DUMP_VALID") == "1"):
+                 print(f"[skip] {name} seed={seed}", flush=True); continue
+             print(f"\n===== {name} seed={seed} ({split}) =====", flush=True)
+-            out = _train_and_collect(model_arg, run_extra, rb, paths, seed, split)
++            resume_context = None
++            if control:
++                resume_context = dict(control=control, checkpoint=os.path.join(wd, "resume", f"{name}__s{seed}.pt"),
++                    identity={"spec":name,"seed":seed,"signature":signature,"pop_grid":lambdas,
++                              "dump_valid":os.environ.get("IKGR_DUMP_VALID") == "1"},
++                    allow_resume=os.environ.get("IKGR_RESUME_ALLOWED") == "1")
++                control.status('preparing_run', spec=name, seed=seed)
++            out = _train_and_collect(model_arg, run_extra, rb, paths, seed, split, resume_context=resume_context)
++            filter_ref = None
++            if out["intent_filter"] is not None:
++                filter_file = os.path.join(wd, f"intent_filter_{name}__s{seed}.json")
++                _atomic_json(filter_file, out["intent_filter"])
++                filter_ref = {"file": os.path.basename(filter_file), "sha256": _file_sha256(filter_file),
++                              "top_pct": out["intent_filter"]["top_pct"], "removed_count": out["intent_filter"]["removed_count"]}
+             for suffix, rname in result_names.items():
+                 rep = slice_report(out["test"][suffix], out["item_pop"], out["n_items"])
+                 rep["train_sec"] = out["train_sec"]
+                 rep["fit"] = out["fit"]
+                 rep["leakage_guard"] = out["guard"]
++                rep["execution"] = out["execution"]
++                if filter_ref is not None:
++                    rep["intent_filter"] = filter_ref
+                 if out["cand_stats"] and suffix == variants[0][0]:
+                     rep.update(out["cand_stats"])
+                 results[rname]["seeds"][str(seed)] = rep
+@@ -705,10 +795,17 @@
+                 print(f"[{rname} s{seed}] ndcg@10={rep['overall']['ndcg@10']} "
+                       f"tail_recall@10={rep['long_tail']['recall@10']} cov@10={rep['coverage@10']} "
+                       f"best_epoch={out['fit']['best_epoch']} ({out['train_sec']}s)", flush=True)
+-            with open(out_path, "w", encoding="utf-8") as f:
+-                json.dump(results, f, ensure_ascii=False, indent=2)
++            _atomic_json(out_path, results)
++            if resume_context and os.path.isfile(resume_context["checkpoint"]):
++                os.remove(resume_context["checkpoint"])
++    if control:
++        control.boundary()
+     print("\nALL DONE")
+ 
+ 
+ if __name__ == "__main__":
+-    main()
++    try:
++        main()
++    except PauseRequested as exc:
++        print(f"PAUSED: {exc}", flush=True)
++        raise SystemExit(PAUSED_EXIT)
+diff --git a/ikgr_core/model_ikgr.py b/ikgr_core/model_ikgr.py
+--- a/ikgr_core/model_ikgr.py
++++ b/ikgr_core/model_ikgr.py
+@@ -1,6 +1,8 @@
+ import torch
+ import torch.nn as nn
+ import torch.nn.functional as F
++import numpy as np
++from ikgr_core.intent_filter import filter_intents
+ 
+ # --- Robust imports for different RecBole versions
+ try:
+@@ -141,6 +143,7 @@
+         self.reg_weight = float(_cfg(config, "reg_weight", 1e-6))
+         self.use_kg = bool(_cfg(config, "use_kg", True))
+         self.kg_pack_path = _cfg(config, "kg_pack_path", "run/kg_pack.pt")
++        self.intent_filter_top_pct = float(_cfg(config, "intent_filter_top_pct", 0))
+         self.kg_layers = int(_cfg(config, "kg_layers", 1))
+         self.intent_learnable = bool(_cfg(config, "intent_learnable", True))
+         self.kg_cap = int(_cfg(config, "kg_cap", 64))
+@@ -217,6 +220,9 @@
+     # ---- KG construction (learnable intent nodes + normalized user/item<->intent adjacency)
+     def _build_kg(self, dataset):
+         pack = torch.load(self.kg_pack_path, map_location="cpu")
++        train_items = np.unique(dataset.inter_feat[self.ITEM_ID].cpu().numpy())
++        train_tokens = dataset.field2id_token[self.ITEM_ID][train_items]
++        pack, self.intent_filter_stats = filter_intents(pack, train_tokens, self.intent_filter_top_pct)
+         raw = pack["intent_emb"].float()             # [n_intents, in_dim] (mpnet)
+         self.n_intents = int(pack["n_intents"])
+         in_dim = raw.shape[1]
+diff --git a/ikgr_core/intent_filter.py b/ikgr_core/intent_filter.py
+new file mode 100644
+--- /dev/null
++++ b/ikgr_core/intent_filter.py
+@@ -0,0 +1,44 @@
++"""Deterministic removal of intents with the most distinct TRAIN item links."""
++import math
++import numpy as np
++import torch
++
++
++def filter_intents(pack, train_item_tokens, top_pct=0):
++    pct = float(top_pct)
++    if not math.isfinite(pct) or not 0 <= pct <= 100:
++        raise ValueError("intent_filter_top_pct must be between 0 and 100")
++    count = int(pack["n_intents"])
++    if pack["intent_emb"].shape[0] != count:
++        raise ValueError("intent embedding rows do not match n_intents")
++    train_tokens = {str(t) for t in train_item_tokens}
++    degree = np.zeros(count, dtype=np.int64)
++    for token, ids in pack["item_intents"].items():
++        if str(token) not in train_tokens:
++            continue
++        unique = np.asarray(sorted(set(int(i) for i in ids)), dtype=np.int64)
++        if len(unique) and (unique.min() < 0 or unique.max() >= count):
++            raise ValueError("intent ID outside embedding range")
++        degree[unique] += 1
++    active = np.flatnonzero(degree)
++    ordered = sorted(active.tolist(), key=lambda i: (-int(degree[i]), i))
++    removed = ordered[:math.floor(len(active) * pct / 100)]
++    blocked = set(removed)
++    stats = {"top_pct": pct, "n_intents": count, "active_train_item_intents": len(active),
++             "train_items": len(train_tokens), "removed_count": len(removed),
++             "removed": [{"intent_id": i, "train_item_degree": int(degree[i])} for i in removed],
++             "definition": "distinct train items; positive-degree intents only; floor; degree DESC, ID ASC; both edge types"}
++    output = pack if not removed else dict(pack)
++    for key in ("user_intents", "item_intents"):
++        before = pack[key]
++        if removed:
++            after = {token: torch.tensor([int(i) for i in ids if int(i) not in blocked], dtype=torch.long)
++                     for token, ids in before.items()}
++            output[key] = after
++        else:
++            after = before
++        stats[key] = {"pack_edges_before": sum(len(v) for v in before.values()),
++                      "pack_edges_after": sum(len(v) for v in after.values()),
++                      "pack_empty_before": sum(len(v) == 0 for v in before.values()),
++                      "pack_empty_after": sum(len(v) == 0 for v in after.values())}
++    return output, stats
+diff --git a/ikgr_core/pause_resume.py b/ikgr_core/pause_resume.py
+new file mode 100644
+--- /dev/null
++++ b/ikgr_core/pause_resume.py
+@@ -0,0 +1,213 @@
++"""Request-only, epoch-boundary pause/resume for the fixed RecBole 1.2 protocol."""
++import json
++import os
++from pathlib import Path
++import random
++import time
++
++PAUSED_EXIT = 75
++
++
++class PauseRequested(Exception):
++    pass
++
++
++def atomic_json(path, value):
++    path = Path(path)
++    path.parent.mkdir(parents=True, exist_ok=True)
++    temp = path.with_suffix(path.suffix + '.tmp')
++    with temp.open('w', encoding='utf-8') as f:
++        json.dump(value, f, ensure_ascii=False, indent=2)
++        f.flush()
++        os.fsync(f.fileno())
++    os.replace(temp, path)
++
++
++class RunLock:
++    """OS lock, released on process exit; the persistent file is not the lock."""
++    def __init__(self, folder):
++        self.path = Path(folder) / 'runner.lock'
++
++    def __enter__(self):
++        self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.file = self.path.open('a+b')
++        self.file.seek(0, 2)
++        if self.file.tell() == 0:
++            self.file.write(b'0')
++            self.file.flush()
++        self.file.seek(0)
++        try:
++            if os.name == 'nt':
++                import msvcrt
++                msvcrt.locking(self.file.fileno(), msvcrt.LK_NBLCK, 1)
++            else:
++                import fcntl
++                fcntl.flock(self.file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
++        except OSError as exc:
++            self.file.close()
++            raise RuntimeError('An experiment launcher is already running for this output directory') from exc
++        return self
++
++    def __exit__(self, *args):
++        self.file.seek(0)
++        if os.name == 'nt':
++            import msvcrt
++            msvcrt.locking(self.file.fileno(), msvcrt.LK_UNLCK, 1)
++        else:
++            import fcntl
++            fcntl.flock(self.file.fileno(), fcntl.LOCK_UN)
++        self.file.close()
++
++
++class Control:
++    def __init__(self, folder):
++        self.folder = Path(folder)
++        self.request = self.folder / 'pause.request'
++        self.status_file = self.folder / 'status.json'
++
++    def requested(self):
++        return self.request.is_file()
++
++    def status(self, state, **details):
++        atomic_json(self.status_file, dict(state=state, time=time.time(), pid=os.getpid(), **details))
++
++    def event(self, event, **details):
++        self.folder.mkdir(parents=True, exist_ok=True)
++        with (self.folder/'events.jsonl').open('a', encoding='utf-8') as f:
++            f.write(json.dumps(dict(event=event,time=time.time(),pid=os.getpid(),**details))+'\n')
++            f.flush()
++            os.fsync(f.fileno())
++
++    def read(self):
++        value = json.loads(self.status_file.read_text(encoding='utf-8')) if self.status_file.exists() else {'state':'idle'}
++        value['pause_requested'] = self.requested()
++        return value
++
++    def ask_pause(self):
++        self.folder.mkdir(parents=True, exist_ok=True)
++        self.request.touch(exist_ok=True)
++        return self.read()
++
++    def boundary(self):
++        if self.requested():
++            raise PauseRequested('Pause requested between runs; completed results are preserved')
++
++
++def _atomic_save(path, value):
++    import torch
++    path = Path(path)
++    path.parent.mkdir(parents=True, exist_ok=True)
++    temp = path.with_suffix(path.suffix + '.tmp')
++    with temp.open('wb') as f:
++        torch.save(value, f, pickle_protocol=4)
++        f.flush()
++        os.fsync(f.fileno())
++    os.replace(temp, path)
++
++
++def _rng(loaders):
++    import numpy as np
++    import torch
++    return {'python': random.getstate(), 'numpy': np.random.get_state(), 'torch': torch.get_rng_state(),
++            'cuda': torch.cuda.get_rng_state_all() if torch.cuda.is_available() else [],
++            'loaders': [loader.generator.get_state() for loader in loaders]}
++
++
++def _restore_rng(value, loaders):
++    import numpy as np
++    import torch
++    random.setstate(value['python'])
++    np.random.set_state(value['numpy'])
++    torch.set_rng_state(value['torch'].cpu())
++    if value['cuda']:
++        torch.cuda.set_rng_state_all([s.cpu() for s in value['cuda']])
++    for loader, state in zip(loaders, value['loaders']):
++        loader.generator.set_state(state.cpu())
++
++
++def fit_with_pause(trainer, train, valid, test, fit_info, control, checkpoint, identity, allow_resume=False):
++    """Keep RecBole.fit unchanged; inspect requests before each NEXT epoch and after fit.
++
++    The next-epoch boundary is after previous validation/early-stopping/checkpoint updates.
++    Workers/AMP/distributed training are excluded because their extra state is not captured.
++    """
++    import torch
++    import recbole
++    if recbole.__version__ != '1.2.0':
++        raise RuntimeError('Pause/resume was validated with RecBole 1.2.0 only')
++    if (train.num_workers != 0 or not trainer.config['single_spec'] or trainer.enable_amp or trainer.enable_scaler
++            or trainer.config['train_neg_sample_args']['distribution'] != 'uniform'):
++        raise RuntimeError('Pause/resume requires worker=0, single-process, uniform negatives, full precision')
++    checkpoint = Path(checkpoint)
++    loaders = [train, valid, test]
++    last_epoch = -1
++    elapsed_before = 0.0
++    complete = False
++    if checkpoint.exists():
++        if not allow_resume:
++            raise RuntimeError('A paused checkpoint exists; use --resume')
++        saved = torch.load(checkpoint, map_location='cpu')
++        if saved.get('version') != 1 or saved['identity'] != identity:
++            raise RuntimeError('Paused checkpoint code/data/config/seed identity differs; refusing unsafe resume')
++        trainer.model.load_state_dict(saved['model'])
++        trainer.model.load_other_parameter(saved['other'])
++        trainer.optimizer.load_state_dict(saved['optimizer'])
++        for key, value in saved['trainer'].items():
++            setattr(trainer, key, value)
++        last_epoch = saved['last_epoch']
++        trainer.start_epoch = last_epoch + 1
++        fit_info.update(saved['fit_info'])
++        elapsed_before = saved['train_seconds']
++        complete = saved['fit_complete']
++        if saved['best_model'] is not None:
++            _atomic_save(trainer.saved_model_file, saved['best_model'])
++        _restore_rng(saved['rng'], loaders)
++        del saved
++        control.event('resumed', **identity, next_epoch=last_epoch+1, fit_complete=complete)
++        print(f'[resume] {identity["spec"]} seed={identity["seed"]} next_epoch={last_epoch + 1}', flush=True)
++    original = trainer._train_epoch
++    started = time.perf_counter()
++
++    def pause_if_requested(done):
++        if not control.requested():
++            return
++        rng = _rng(loaders)
++        best = None
++        if fit_info.get('best_epoch') is not None:
++            full = torch.load(trainer.saved_model_file, map_location='cpu')
++            best = {key:full[key] for key in ('state_dict','other_parameter','epoch')}
++        payload = {'version':1, 'identity':identity, 'model':trainer.model.state_dict(),
++                   'other':trainer.model.other_parameter(), 'optimizer':trainer.optimizer.state_dict(),
++                   'trainer':{key:getattr(trainer,key) for key in
++                              ('cur_step','best_valid_score','best_valid_result','train_loss_dict')},
++                   'last_epoch':last_epoch, 'fit_complete':done, 'fit_info':dict(fit_info),
++                   'train_seconds':elapsed_before + time.perf_counter()-started,
++                   'rng':rng, 'best_model':best}
++        start_save = time.perf_counter()
++        _atomic_save(checkpoint, payload)
++        control.status('checkpoint_saved', **identity, last_epoch=last_epoch, fit_complete=done,
++                       checkpoint=str(checkpoint.resolve()), save_seconds=time.perf_counter()-start_save)
++        control.event('checkpoint_saved', **identity, last_epoch=last_epoch, fit_complete=done,
++                      checkpoint=str(checkpoint.resolve()), save_seconds=time.perf_counter()-start_save)
++        print(f'[pause] saved after epoch={last_epoch}; exiting to release GPU',flush=True)
++        raise PauseRequested(str(checkpoint))
++
++    def train_epoch(data, epoch, *args, **kwargs):
++        nonlocal last_epoch
++        pause_if_requested(False)
++        control.status('training', **identity, epoch=epoch, max_epochs=trainer.epochs)
++        result = original(data, epoch, *args, **kwargs)
++        last_epoch = epoch
++        fit_info['last_epoch'] = epoch
++        return result
++
++    trainer._train_epoch = train_epoch
++    try:
++        # RecBole.fit would overwrite the best checkpoint when start_epoch >= epochs.
++        result = (trainer.best_valid_score, trainer.best_valid_result) if complete else trainer.fit(
++            train, valid, saved=True, show_progress=False)
++        pause_if_requested(True)
++        return result, elapsed_before + time.perf_counter()-started
++    finally:
++        trainer._train_epoch = original
++
+diff --git a/scripts/run_todo_5_8.py b/scripts/run_todo_5_8.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/run_todo_5_8.py
+@@ -0,0 +1,180 @@
++"""Prepare/check the experiment; training requires explicit --run or --resume."""
++import argparse
++import gc
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++ROOT = Path(__file__).resolve().parents[1]
++PHASES = {"5": ["BPR", "IKGR_kgoff", "IKGR_dyn_nointent"],
++          "8": ["IKGR_dyn", "IKGR_dyn_filter5", "IKGR_dyn_filter10", "IKGR_dyn_filter20"]}
++
++
++def experiment_environment(config, specs):
++    env = dict(os.environ)
++    for key in list(env):
++        if key.startswith("IKGR_"):
++            del env[key]
++    env.update(IKGR_CONFIG=str(config), IKGR_SPLIT="TO", IKGR_SEEDS="2020,2021,2022",
++               IKGR_SPECS=",".join(specs), IKGR_EPOCHS="40", IKGR_EVAL_STEP="2",
++               IKGR_STOPPING_STEP="3", IKGR_VALID_METRIC="NDCG@10", IKGR_LR="0.001", IKGR_REG="0.000001",
++               IKGR_POP_RERANK_SPECS=",".join(specs), IKGR_POP_RERANK_GRID="0.25,0.5,1.0",
++               IKGR_DUMP_VALID="1", IKGR_REQUIRE_PROVENANCE="1", PYTHONIOENCODING="utf-8", PYTHONUTF8="1",
++               PYTHONHASHSEED="2020", CUBLAS_WORKSPACE_CONFIG=":4096:8",
++               HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", WANDB_MODE="disabled")
++    return env
++
++
++def check(config_path, specs, output):
++    import numpy as np
++    import torch
++    import yaml
++    import eval_slices as ev
++    cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
++    paths, rb = cfg["paths"], cfg["recbole"]
++    assert rb["embedding_size"] == 64 and rb["epochs"] == 40
++    assert rb["train_batch_size"] == 2048 and rb["eval_users_per_batch"] == 128
++    assert rb["eval_step"] == 2 and rb["stopping_step"] == 3
++    assert rb["require_cuda"] and torch.cuda.is_available(), "CUDA is required"
++    ev._set_determinism(2020)
++    config = ev.Config(model="BPR", dataset=rb["dataset"], config_dict=ev._config(rb, paths, {}, 2020))
++    dataset = ev.create_dataset(config)
++    ev._configure_eval_batch(config, dataset)
++    train, valid, test = ev.data_preparation(config, dataset)
++    assert valid.step == test.step == 128
++    assert len(valid.user_df) == len(test.user_df) == 62142, "Full evaluation population changed"
++    guard = ev._check_profile_leakage(paths, {"use_kg": True, "kg_pack_path": paths["kg_pack"]}, train, config, "TO")
++    assert guard["verified"]
++    batch = next(iter(train)).to(config["device"])
++    eval_batch = next(iter(valid))[0].to(config["device"])
++    manifest = {"purpose": "preflight only; no optimizer steps, epochs or formal results",
++                "gpu": torch.cuda.get_device_name(0), "torch": torch.__version__, "cuda": torch.version.cuda,
++                "torch_threads": torch.get_num_threads(), "train_interactions": len(train.dataset.inter_feat),
++                "valid_users": len(valid.user_df), "test_users": len(test.user_df),
++                "eval_users_per_batch": valid.step, "eval_batch_size": config["eval_batch_size"],
++                "seeds": [2020,2021,2022], "specs": specs, "leakage_guard": guard, "checks": {}}
++    output.mkdir(parents=True, exist_ok=True)
++    all_specs = ev.build_specs(paths)
++    removal_sets = {}
++    for name in specs:
++        ev._set_determinism(2020)
++        model_arg, extra = all_specs[name]
++        model_cfg = ev.Config(model=model_arg, dataset=rb["dataset"], config_dict=ev._config(rb, paths, extra, 2020))
++        ev._configure_eval_batch(model_cfg, dataset)
++        klass = model_arg if not isinstance(model_arg,str) else ev.get_model(model_cfg["model"])
++        model = klass(model_cfg, train.dataset).to(model_cfg["device"])
++        if getattr(model,"use_dynamic",False):
++            ev._build_recency(model, train, model_cfg)
++        model.train()
++        loss = model.calculate_loss(batch)
++        loss = sum(loss) if isinstance(loss,tuple) else loss
++        assert torch.isfinite(loss).item(), f"{name}: non-finite loss"
++        loss.backward()
++        assert all(torch.isfinite(p.grad).all().item() for p in model.parameters() if p.grad is not None)
++        model.eval()
++        with torch.no_grad():
++            scores = model.full_sort_predict(eval_batch).reshape(len(eval_batch), -1)
++            assert scores.shape == (128, dataset.item_num)
++            assert torch.isfinite(scores).all().item()
++        signature, context = ev._experiment_context(name, model_arg, extra, rb, paths, "TO")
++        entry = {"cuda": next(model.parameters()).device.type == "cuda", "finite_loss_and_gradients": True,
++                 "finite_full_sort_scores": True, "signature": signature, "context": context}
++        stats = getattr(model,"intent_filter_stats",None)
++        if stats is not None:
++            pct = stats["top_pct"]
++            removed = {r["intent_id"] for r in stats["removed"]}
++            removal_sets[pct] = removed
++            for prefix in ("user", "item"):
++                ids = getattr(model,prefix+"_intent_ids")
++                mask = getattr(model,prefix+"_intent_mask")
++                actual = set(ids[mask].cpu().numpy().tolist())
++                assert not removed.intersection(actual), f"{name}: removed intent remains in effective edges"
++            ev._atomic_json(output/f"{name}_filter.json", stats)
++            entry["filter"] = {"pct": pct, "removed_count": len(removed), "active": stats["active_train_item_intents"]}
++        manifest["checks"][name] = entry
++        print(f"PREFLIGHT {name}: GPU forward/backward/full-sort OK" + (f"; removed={len(removed)}" if stats else ""),flush=True)
++        del scores, loss, model
++        gc.collect()
++        torch.cuda.empty_cache()
++    sorted_pcts = sorted(removal_sets)
++    assert all(removal_sets[a] <= removal_sets[b] for a,b in zip(sorted_pcts,sorted_pcts[1:]))
++    manifest["filter_sets_nested"] = True
++    manifest["status"] = "passed"
++    ev._atomic_json(output/"preflight.json", manifest)
++    print(f"PREFLIGHT PASSED -> {output/'preflight.json'}",flush=True)
++
++
++def main():
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument("--phase", choices=["5","8","all"], default="all")
++    ap.add_argument("--config", default="configs/todo_5_8.yaml")
++    actions = ap.add_mutually_exclusive_group()
++    actions.add_argument("--check", action="store_true", help="default: validate full-data settings and GPU paths")
++    actions.add_argument("--run", action="store_true", help="explicitly start the approved formal training jobs")
++    actions.add_argument("--pause", action="store_true", help="request checkpoint + exit at the next safe epoch boundary")
++    actions.add_argument("--resume", action="store_true", help="clear pause request and continue saved state")
++    actions.add_argument("--status", action="store_true", help="read status without loading CUDA")
++    ap.add_argument("--check-output", default="../settings_preflight")
++    args = ap.parse_args()
++    os.chdir(ROOT)
++    sys.path.insert(0,str(ROOT))
++    config = Path(args.config).resolve()
++    import yaml
++    from ikgr_core.pause_resume import Control, RunLock, PAUSED_EXIT
++    cfg = yaml.safe_load(config.read_text(encoding='utf-8'))
++    control = Control(Path(cfg['paths']['workdir']).resolve() / 'control')
++    if args.pause or args.status:
++        print(json.dumps(control.ask_pause() if args.pause else control.read(), ensure_ascii=False, indent=2))
++        return
++    specs = PHASES["5"] + PHASES["8"] if args.phase == "all" else PHASES[args.phase]
++    env = experiment_environment(config, specs)
++    env['CUDA_VISIBLE_DEVICES'] = str(cfg['recbole'].get('gpu_id', '0'))
++    env['IKGR_CONTROL_DIR'] = str(control.folder)
++    env['IKGR_RESUME_ALLOWED'] = '1' if args.resume else '0'
++    # Remove inherited IKGR knobs in this process as well as in child processes.
++    for key in list(os.environ):
++        if key.startswith("IKGR_"):
++            del os.environ[key]
++    os.environ.update(env)
++    sys.argv = [sys.argv[0]]  # Do not let RecBole reinterpret launcher flags.
++    if not (args.run or args.resume):
++        check(config, specs, Path(args.check_output).resolve())
++        return
++    with RunLock(control.folder):
++        if args.resume:
++            previous = control.read()
++            if previous.get('phase') and previous['phase'] != args.phase:
++                raise RuntimeError('Resume with the same --phase as the original launch')
++            control.request.unlink(missing_ok=True)
++        elif control.requested() or list((control.folder.parent/'resume').glob('*.pt')):
++            raise RuntimeError('Paused state exists; use --resume')
++        control.status('preparing', phase=args.phase, gpu_released=False)
++        try:
++            # Run preflight in a separate process so it releases its CUDA context before training.
++            # A resume reconstructs and fingerprints its own model/data; no redundant 7-model preflight.
++            if args.run:
++                subprocess.run([sys.executable, '-u', str(Path(__file__).resolve()), '--check', '--phase', args.phase,
++                                '--config', str(config), '--check-output', args.check_output], cwd=ROOT, env=env, check=True)
++            if control.requested():
++                code = PAUSED_EXIT
++            else:
++                code = subprocess.run([sys.executable,'-u','eval_slices.py'],cwd=ROOT,env=env).returncode
++            details = control.read()
++            for key in ('state','time','pid','pause_requested','phase','gpu_released'):
++                details.pop(key,None)
++            control.status('paused' if code == PAUSED_EXIT else 'completed' if code == 0 else 'failed',
++                           phase=args.phase, gpu_released=True, exit_code=code, **details)
++            if code not in (0, PAUSED_EXIT):
++                raise RuntimeError(f'Experiment failed with exit code {code}')
++            print('PAUSED; child process exited and GPU resources released' if code == PAUSED_EXIT else 'COMPLETED',flush=True)
++        except BaseException:
++            # Do not claim GPU release if an unexpected parent interruption occurred.
++            if control.read().get('state') != 'failed':
++                control.status('launcher_error', phase=args.phase)
++            raise
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/configs/todo_5_8.yaml b/configs/todo_5_8.yaml
+new file mode 100644
+--- /dev/null
++++ b/configs/todo_5_8.yaml
+@@ -0,0 +1,26 @@
++# Dedicated, full-data experiment configuration. Temporary benchmark results are not reused.
++paths:
++  input_csv: data/kc_k30/profiles_k30_TO.csv
++  profile_provenance: data/kc_k30/profile_provenance_k30_TO.csv.gz
++  inter_file: data/kc_k30/interactions_k30.csv
++  kg_pack: run_k30_TO/kg_pack.pt
++  meta_kg_pack: run_k30_TO/meta_kg_pack.pt
++  workdir: run_k30_TO/todo_5_8/
++recbole:
++  model: IKGR
++  dataset: ikgr-custom
++  topk: [10, 30]
++  metrics: [Recall, MRR, NDCG, Hit, Precision]
++  embedding_size: 64
++  epochs: 40
++  eval_step: 2
++  stopping_step: 3
++  valid_metric: NDCG@10
++  learning_rate: 0.001
++  reg_weight: 0.000001
++  dropout: 0.1
++  train_batch_size: 2048
++  eval_users_per_batch: 128
++  worker: 0
++  gpu_id: '0'
++  require_cuda: true
+diff --git a/docs/todo_5_8_protocol.md b/docs/todo_5_8_protocol.md
+new file mode 100644
+--- /dev/null
++++ b/docs/todo_5_8_protocol.md
+@@ -0,0 +1,68 @@
++# TODO 5 and 8: prepared experiment protocol
++
++Preparation date: 2026-11-10. Base: architect at e75941a17ecc4b6dbf51a3a6eefd1f4d82bfd221.
++This document records the user's choices and implementation decisions for review. Formal results have not been generated by preparation or timing probes.
++
++## Scope and choices
++
++- TODO 5: BPR, IKGR_kgoff, IKGR_dyn_nointent, each with seeds 2020, 2021, 2022 (9 fits).
++- TODO 8: MF-backbone IKGR_dyn with 0%, 5%, 10%, 20% intent removal and the same seeds (12 fits).
++- Reuse TODO 5's no-intent control for TODO 8. Do not generalize conclusions to LightGCN.
++- All 21 fits use one local RTX 2070 SUPER, the same dataset and protocol. No concurrent GPU fits.
++- Dedicated Python 3.11.18 environment, PyTorch 2.3.0+cu121 and RecBole 1.2.0. Keep the dependency freeze and environment evidence with the eventual PR.
++
++## Fixed protocol
++
++Use `configs/todo_5_8.yaml`: k=30, per-user temporal TO 80/10/10 split, train-only profiles and recency, 64 dimensions, train batch 2048, learning rate 0.001, regularization 0.000001, maximum 40 epochs, validation every 2 epochs and stopping patience 3. Select the checkpoint using validation NDCG@10. Keep existing deterministic, full-precision training.
++
++The user approved 128 users per full-sort evaluation batch. RecBole expresses its batch size as user-item score count; the launcher derives 128 * item_num (3,580,928 for 27,976 items including padding). Evaluate **all 62,142 validation users and all 62,142 test users**, against all items with the existing history masks. The 1,024-user timing sample is never a formal evaluation population.
++
++Earlier batch probes found matching rounded validation metrics but a few near-tie top-30 ordering differences. Batch changes are not bitwise-equivalent. Apply 128 consistently across all conditions and record the actual value in each result. Do not change precision, train batch, seed count, epoch cap or validation frequency to improve timing.
++
++## Intent filtering definition
++
++Count distinct items present in the train split connected to each intent, before the existing cap of 32. Only intents with positive train-item degree enter the percentage denominator. Sort by degree descending, then original intent ID ascending, and remove floor(active_count * percentage / 100). Remove every incident user and item edge. Preserve intent IDs, embedding rows and shape, and the order of remaining edges; then apply the existing cap and normalization. User-only or held-out-item-only intents are outside the removal denominator. Intent embeddings stay frozen as in IKGR_dyn.
++
++Save the complete removed-ID/degree list, counts and edge statistics separately for each condition/seed and reference its SHA256 prefix in the result. The real-data preflight found 114,794 positive-degree intents and removed 0 / 5,739 / 11,479 / 22,958. Removal sets must be nested. Zero removal is a no-op; empty filtered rows must remain finite.
++
++## Launch and validation
++
++From the repository directory, use the dedicated interpreter:
++
++```powershell
++. ..\Activate-Experiment.ps1
++..\venv\Scripts\python.exe scripts/run_todo_5_8.py --check
++..\venv\Scripts\python.exe -m pytest -q tests/
++```
++
++The check verifies full-data split sizes, train-only provenance, all selected models on CUDA, finite forward/backward values, full-sort predictions, and effective filter edges. It takes one training minibatch but performs no optimizer updates. Default behavior is check-only. Formal training requires the explicit command below, after the user instructs it to start:
++
++```powershell
++..\venv\Scripts\python.exe scripts/run_todo_5_8.py --run --phase all
++```
++
++`--phase 5` and `--phase 8` permit separate execution. The launcher clears inherited IKGR environment overrides and explicitly sets the approved seeds, metrics and reranking. CUDA is mandatory; CPU fallback fails. Outputs go to isolated `run_k30_TO/todo_5_8/`. Code/config/data/runtime fingerprints prevent reuse of stale results; a completed seed also requires requested per-user files and an intact filter-statistics artifact. JSON result updates use atomic replacement. Freeze the code/config before formal runs.
++
++## Requested pause and resume
++
++The user chose saving only when a pause is requested, to release the GPU for games without paying for a save every epoch. From a second terminal in the repository directory:
++
++```powershell
++..\venv\Scripts\python.exe scripts/run_todo_5_8.py --pause
++..\venv\Scripts\python.exe scripts/run_todo_5_8.py --status
++..\venv\Scripts\python.exe scripts/run_todo_5_8.py --resume --phase all
++```
++
++Use the same `--config` and `--phase` as the original launch. `--pause` requests a stop; it does not immediately kill the process. Wait for status `paused` and `gpu_released: true` before starting a GPU-heavy game. The child exits after finishing the current epoch and its scheduled validation, updating early stopping, and atomically saving the state. During preparation or final evaluation/export, stopping waits for that stage to finish. Between runs, completed results suffice and no training snapshot is needed.
++
++The snapshot includes current model/optimizer, Python/NumPy/CPU/CUDA random states, train/validation/test loader generators, completed epoch, early-stopping state, best validation metrics, loss history and accumulated active training time. It also embeds the best validation model independently of the latest model: a pause must not change model selection. Thus pause files are larger than ordinary best-only checkpoints. Snapshots are replaced atomically and are removed only after all per-user files and the completed result are committed. Pause duration and data reconstruction are excluded from `train_sec`.
++
++Resume rebuilds the identical dataset/model, rejects a changed code/data/config/seed fingerprint, restores state and continues at the next epoch. It does not rerun the seven-model preflight on every resume. A completed fit (including early stopping) resumes evaluation without another optimizer step. The implementation targets the fixed RecBole 1.2.0 protocol: one process, worker=0, uniform negatives and full precision. The OS lock prevents two launchers from using the same output directory. The parent launcher never retains a CUDA context; preflight runs in a separate child.
++
++This is controlled pause/resume, not automatic crash recovery. Force-killing during an epoch does not save that epoch; an unrequested crash may require restarting the current seed. Do not edit code/config, change hardware, or delete inputs while paused. A changed environment is refused rather than silently mixing experiments. The normal training checkpoint still follows the existing best-validation policy when no pause is requested.
++
++## Later analysis and PR contents
++
++Evaluate popularity penalties 0.25, 0.5, 1.0 without extra model fits. Retain validation and test per-user outputs for every variant. Choose the representative removal rate by mean validation NDCG@10 over three seeds; break ties toward the smaller rate. Publish every rate's results, seed means/standard deviations, paired user bootstrap intervals and Wilcoxon comparisons. Test results must not choose the representative condition.
++
++Include this decision record, code, exact commands, package freeze, checks, data/code hashes, raw metrics, filter artifacts, paired analysis and limitations in the PR targeting architect through a user-owned fork. Do not mix temporary timing metrics or obsolete 512-dimensional results into accuracy claims. No PR is created or merged during environment preparation.
+diff --git a/tests/test_experiment_setup.py b/tests/test_experiment_setup.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_experiment_setup.py
+@@ -0,0 +1,101 @@
++from pathlib import Path
++from types import SimpleNamespace
++import sys
++
++import pytest
++import torch
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++import eval_slices as ev
++from ikgr_core.intent_filter import filter_intents
++
++
++def pack():
++    return {"n_intents": 5, "intent_emb": torch.arange(20).reshape(5,4).float(),
++            "item_intents": {"a":torch.tensor([0,0,1]), "b":torch.tensor([0,2]),
++                             "c":torch.tensor([1,2]), "heldout":torch.tensor([3])},
++            "user_intents": {"u":torch.tensor([0,1]), "v":torch.tensor([0]), "w":torch.tensor([4])}}
++
++
++def test_filter_train_degree_ties_nested_and_both_edges():
++    p = pack()
++    sets=[]
++    for pct,expected in [(0,[]),(34,[0]),(67,[0,1]),(100,[0,1,2])]:
++        out,stats = filter_intents(p,{"a","b","c"},pct)
++        removed = [r["intent_id"] for r in stats["removed"]]
++        assert removed == expected
++        assert stats["active_train_item_intents"] == 3  # held-out and user-only intents excluded
++        assert all(r["train_item_degree"] == 2 for r in stats["removed"])  # duplicate edge counted once
++        assert out["intent_emb"] is p["intent_emb"] and out["n_intents"] == 5
++        for key in ("user_intents","item_intents"):
++            assert all(not set(ids.tolist()).intersection(removed) for ids in out[key].values())
++        sets.append(set(removed))
++    assert all(a<=b for a,b in zip(sets,sets[1:]))
++    assert p["item_intents"]["a"].tolist() == [0,0,1]  # original is immutable
++    out,_=filter_intents(p,{"a","b","c"},34)
++    assert out["item_intents"]["a"].tolist()==[1]
++    assert out["user_intents"]["v"].numel()==0
++
++
++def test_zero_filter_and_no_active_intents_are_noops():
++    p=pack()
++    assert filter_intents(p,{"a","b"},0)[0] is p
++    assert filter_intents(p,set(),20)[0] is p
++
++
++@pytest.mark.parametrize("pct",[-1,101,float("nan"),float("inf")])
++def test_bad_filter_percentage_rejected(pct):
++    with pytest.raises(ValueError): filter_intents(pack(),{"a"},pct)
++
++
++def test_eval_batch_converts_users_to_score_count_and_requires_cuda():
++    config={"eval_users_per_batch":128,"eval_batch_size":4096,"require_cuda":True,"device":torch.device("cuda")}
++    ev._configure_eval_batch(config,SimpleNamespace(item_num=27976))
++    assert config["eval_batch_size"]==3580928
++    config["device"]=torch.device("cpu")
++    with pytest.raises(RuntimeError): ev._configure_eval_batch(config,SimpleNamespace(item_num=10))
++
++
++@pytest.mark.parametrize("users",[0,-1,1.5,True])
++def test_bad_eval_batch_rejected(users):
++    with pytest.raises(ValueError):
++        ev._configure_eval_batch({"eval_users_per_batch":users},SimpleNamespace(item_num=10))
++
++
++def test_actual_interaction_change_invalidates_result(tmp_path):
++    atomic=tmp_path/"ds"/"ds.inter"
++    atomic.parent.mkdir()
++    atomic.write_text("before")
++    paths={"inter_file":str(tmp_path/"interactions.csv")}
++    a,_=ev._experiment_context("BPR","BPR",{},{"dataset":"ds"},paths,"TO")
++    atomic.write_text("changed interaction data")
++    b,_=ev._experiment_context("BPR","BPR",{},{"dataset":"ds"},paths,"TO")
++    assert a != b
++
++
++def test_runtime_fingerprint_handles_hidden_gpu(monkeypatch, tmp_path):
++    monkeypatch.setattr(torch.cuda, "is_available", lambda: True)
++    monkeypatch.setattr(torch.cuda, "device_count", lambda: 0)
++    def invalid_query(*args):
++        raise AssertionError("No visible GPU may be queried")
++    monkeypatch.setattr(torch.cuda, "get_device_name", invalid_query)
++    _,ctx=ev._experiment_context("BPR","BPR",{},{"dataset":"ds"},{"inter_file":str(tmp_path/"input.csv")},"TO")
++    assert ctx["runtime"]["gpu"] is None
++
++
++def test_resume_requires_requested_per_user_files(tmp_path):
++    results={"BPR":{"seeds":{"2020":{}}}}
++    assert not ev._seed_complete(results,["BPR"],2020,tmp_path,False)
++    (tmp_path/"BPR__s2020__test.csv.gz").write_bytes(b"fixture")
++    assert ev._seed_complete(results,["BPR"],2020,tmp_path,False)
++    assert not ev._seed_complete(results,["BPR"],2020,tmp_path,True)
++    (tmp_path/"BPR__s2020__valid.csv.gz").write_bytes(b"fixture")
++    assert ev._seed_complete(results,["BPR"],2020,tmp_path,True)
++    artifact = tmp_path.parent / (tmp_path.name + "_filter.json")
++    artifact.write_text("{}")
++    results["BPR"]["seeds"]["2020"]["intent_filter"] = {"file":artifact.name, "sha256":ev._file_sha256(artifact)}
++    assert ev._seed_complete(results,["BPR"],2020,tmp_path,True)
++    artifact.write_text("changed")
++    assert not ev._seed_complete(results,["BPR"],2020,tmp_path,True)
++    artifact.unlink()
++    assert not ev._seed_complete(results,["BPR"],2020,tmp_path,True)
+diff --git a/tests/test_pause_resume.py b/tests/test_pause_resume.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_pause_resume.py
+@@ -0,0 +1,155 @@
++import hashlib
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++import numpy as np
++import pytest
++import torch
++
++ROOT=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT))
++import eval_slices  # register project/RecBole model classes before reading fixtures
++from ikgr_core.pause_resume import Control, RunLock
++
++
++def worker(folder, model, *args, expected=0):
++    env=dict(os.environ,PYTHONUTF8='1',PYTHONIOENCODING='utf-8',PYTHONHASHSEED='2020',WANDB_MODE='disabled')
++    r=subprocess.run([sys.executable,str(ROOT/'tests/pause_worker.py'),'--folder',str(folder),
++                      '--model',model,*args],env=env,cwd=ROOT,capture_output=True,text=True,encoding='utf-8')
++    assert r.returncode==expected,r.stdout+r.stderr
++    return r
++
++
++def equal(a,b):
++    if torch.is_tensor(a): assert torch.equal(a.cpu(),b.cpu())
++    elif isinstance(a,np.ndarray): assert np.array_equal(a,b)
++    elif isinstance(a,dict):
++        assert a.keys()==b.keys()
++        for k in a: equal(a[k],b[k])
++    elif isinstance(a,(list,tuple)):
++        assert len(a)==len(b)
++        for x,y in zip(a,b): equal(x,y)
++    else: assert a==b
++
++
++@pytest.mark.parametrize('model,pause_epoch',[('BPR',0),('BPR',1),('BPR',5),('IKGR',0),('IKGR',1)])
++def test_pause_matches_uninterrupted_across_processes(tmp_path,model,pause_epoch):
++    baseline=tmp_path/'baseline'
++    paused=tmp_path/'paused'
++    worker(baseline,model,'--plain')
++    worker(paused,model,'--pause-epoch',str(pause_epoch),expected=75)
++    assert (paused/'resume.pt').exists() and not (paused/'final.pt').exists()
++    state=torch.load(paused/'resume.pt',map_location='cpu')
++    assert state['last_epoch']==pause_epoch
++    assert state['fit_complete']==(pause_epoch==5)
++    # A second pause after resuming tests repeated snapshots and the best-model bundle.
++    if pause_epoch==0:
++        worker(paused,model,'--resume','--pause-epoch','2',expected=75)
++    worker(paused,model,'--resume')
++    a=torch.load(baseline/'final.pt',map_location='cpu')
++    b=torch.load(paused/'final.pt',map_location='cpu')
++    equal(a,b)
++    assert a['best_epoch']==1 and a['fit_info']['last_epoch']==5 and a['cur_step']==2
++
++
++def test_mismatch_refused_without_overwriting_snapshot(tmp_path):
++    worker(tmp_path,'BPR','--pause-epoch','1',expected=75)
++    before=hashlib.sha256((tmp_path/'resume.pt').read_bytes()).hexdigest()
++    r=worker(tmp_path,'BPR','--resume','--signature','changed',expected=1)
++    assert 'refusing unsafe resume' in r.stderr
++    assert hashlib.sha256((tmp_path/'resume.pt').read_bytes()).hexdigest()==before
++
++
++def test_control_status_and_exclusive_lock(tmp_path):
++    control=Control(tmp_path)
++    assert control.read()=={'state':'idle','pause_requested':False}
++    control.ask_pause()
++    assert control.read()['pause_requested']
++    with RunLock(tmp_path):
++        with pytest.raises(RuntimeError,match='already running'):
++            with RunLock(tmp_path): pass
++    with RunLock(tmp_path): pass
++
++
++def test_launcher_marks_gpu_release_only_after_child_exit(tmp_path,monkeypatch):
++    import yaml
++    from types import SimpleNamespace
++    from scripts import run_todo_5_8 as launch
++    cfg=tmp_path/'config.yaml'
++    cfg.write_text(yaml.safe_dump({'paths':{'workdir':str(tmp_path/'run')},'recbole':{'gpu_id':'0'}}))
++    control=Control(tmp_path/'run/control')
++    calls=[]
++    def child(cmd,**kw):
++        calls.append(cmd)
++        if '--check' in cmd:
++            assert control.read()['gpu_released'] is False
++            return SimpleNamespace(returncode=0)
++        assert cmd[-1]=='eval_slices.py'
++        control.status('checkpoint_saved',spec='BPR',seed=2020,last_epoch=0)
++        assert control.read().get('gpu_released') is not True
++        return SimpleNamespace(returncode=75)
++    monkeypatch.setattr(launch.subprocess,'run',child)
++    monkeypatch.setattr(sys,'argv',['run_todo_5_8.py','--run','--phase','5','--config',str(cfg)])
++    previous_env=dict(os.environ)
++    previous_cwd=os.getcwd()
++    try:
++        launch.main()
++    finally:
++        os.environ.clear()
++        os.environ.update(previous_env)
++        os.chdir(previous_cwd)
++    status=control.read()
++    assert len(calls)==2 and status['state']=='paused' and status['gpu_released'] is True
++    assert status['phase']=='5' and status['last_epoch']==0
++
++
++def test_eval_queue_pause_resume_and_result_commit(tmp_path):
++    import yaml
++    # Reuse the small deterministic atomic-data fixture; all work stays under tmp_path.
++    worker(tmp_path/'data','BPR','--plain')
++    output=tmp_path/'output'
++    config=tmp_path/'config.yaml'
++    config.write_text(yaml.safe_dump({'paths':{'inter_file':str(tmp_path/'data/input.csv'),'workdir':str(output)},
++        'recbole':{'dataset':'tiny','embedding_size':16,'epochs':4,'eval_step':2,'stopping_step':3,
++                   'metrics':['NDCG','Recall'],'topk':[10,30],'gpu_id':'','worker':0,'train_batch_size':64,
++                   'eval_users_per_batch':8}}))
++    control=Control(output/'control')
++    env=dict(os.environ,PYTHONUTF8='1',PYTHONIOENCODING='utf-8',PYTHONHASHSEED='2020',CUDA_VISIBLE_DEVICES='',
++             IKGR_CONFIG=str(config),IKGR_SPLIT='TO',IKGR_SEEDS='2020',IKGR_SPECS='BPR',IKGR_EPOCHS='4',
++             IKGR_EVAL_STEP='2',IKGR_STOPPING_STEP='3',IKGR_VALID_METRIC='NDCG@10',IKGR_DUMP_VALID='1',
++             IKGR_CONTROL_DIR=str(control.folder),IKGR_POP_RERANK_GRID='0.25',IKGR_POP_RERANK_SPECS='BPR',
++             TEST_PAUSE_AFTER_FIRST='1',IKGR_RESUME_ALLOWED='0',IKGR_REQUIRE_PROVENANCE='0')
++    def run(expected):
++        p=subprocess.run([sys.executable,str(ROOT/'tests/pause_queue_worker.py')],cwd=ROOT,env=env,
++                         capture_output=True,text=True,encoding='utf-8')
++        assert p.returncode==expected,p.stdout+p.stderr
++        return p
++    run(75)
++    assert not (output/'slice_eval_TO_result.json').exists()
++    assert (output/'resume/BPR__s2020.pt').exists()
++    # The actual launcher pause/status commands must work without importing torch/CUDA.
++    p=subprocess.run([sys.executable,str(ROOT/'scripts/run_todo_5_8.py'),'--status','--config',str(config)],
++                     capture_output=True,text=True,encoding='utf-8')
++    assert p.returncode==0,p.stderr
++    assert json.loads(p.stdout)['pause_requested']
++    control.request.unlink()
++    env.update(TEST_PAUSE_AFTER_FIRST='0',IKGR_RESUME_ALLOWED='1')
++    run(0)
++    result=json.loads((output/'slice_eval_TO_result.json').read_text())
++    assert set(result)=={'BPR','BPR_pop0p25'}
++    assert not (output/'resume/BPR__s2020.pt').exists()
++    assert len(list((output/'per_user_TO').glob('*.csv.gz')))==4
++    again=run(0)
++    assert '[skip] BPR seed=2020' in again.stdout
++
++
++@pytest.mark.skipif(os.environ.get('IKGR_TEST_CUDA')!='1',reason='explicit optional CUDA integration probe')
++def test_cuda_pause_matches_uninterrupted(tmp_path):
++    worker(tmp_path/'baseline','IKGR','--plain','--gpu')
++    worker(tmp_path/'paused','IKGR','--gpu','--pause-epoch','1',expected=75)
++    worker(tmp_path/'paused','IKGR','--gpu','--resume')
++    equal(torch.load(tmp_path/'baseline/final.pt',map_location='cpu'),
++          torch.load(tmp_path/'paused/final.pt',map_location='cpu'))
+diff --git a/tests/pause_worker.py b/tests/pause_worker.py
+new file mode 100644
+--- /dev/null
++++ b/tests/pause_worker.py
+@@ -0,0 +1,108 @@
++"""Separate-process synthetic training for pause/resume equivalence tests."""
++import argparse
++import os
++from pathlib import Path
++import random
++import sys
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT))
++ap=argparse.ArgumentParser()
++ap.add_argument('--folder',required=True)
++ap.add_argument('--model',default='BPR')
++ap.add_argument('--pause-epoch',type=int,default=-1)
++ap.add_argument('--resume',action='store_true')
++ap.add_argument('--plain',action='store_true')
++ap.add_argument('--gpu',action='store_true')
++ap.add_argument('--signature',default='fixture-v1')
++args=ap.parse_args()
++sys.argv=[sys.argv[0]]
++os.environ['CUDA_VISIBLE_DEVICES']='0' if args.gpu else ''
++os.environ['CUBLAS_WORKSPACE_CONFIG']=':4096:8'
++import numpy as np
++import torch
++import eval_slices as ev
++from ikgr_core.pause_resume import Control, PauseRequested, fit_with_pause
++
++folder=Path(args.folder)
++folder.mkdir(parents=True,exist_ok=True)
++dsdir=folder/'tiny'
++dsdir.mkdir(exist_ok=True)
++inter=dsdir/'tiny.inter'
++if not inter.exists():
++    rng=np.random.default_rng(19)
++    lines=['user_id:token\titem_id:token\ttimestamp:float']
++    for u in range(1,25):
++        for t,i in enumerate(rng.choice(np.arange(1,51),24,replace=False)):
++            lines.append(f'{u}\t{i}\t{t+1}')
++    inter.write_text('\n'.join(lines)+'\n')
++kg=folder/'kg.pt'
++if not kg.exists():
++    torch.save({'n_intents':8,'intent_emb':torch.arange(128).reshape(8,16).float()/128,
++                'user_intents':{str(u):torch.tensor([u%8,(u+1)%8]) for u in range(1,25)},
++                'item_intents':{str(i):torch.tensor([i%8,(i+1)%8]) for i in range(1,51)}},kg)
++ev._set_determinism(2020)
++model_arg='BPR' if args.model=='BPR' else ev.IKGRModel
++cd={'data_path':str(folder),'USER_ID_FIELD':'user_id','ITEM_ID_FIELD':'item_id','TIME_FIELD':'timestamp',
++    'load_col':{'inter':['user_id','item_id','timestamp']},'seed':2020,'reproducibility':True,
++    'embedding_size':16,'train_batch_size':64,'eval_batch_size':1024,'epochs':8,'eval_step':2,
++    'stopping_step':1,'valid_metric':'NDCG@5','metrics':['NDCG','Recall'],'topk':[5],
++    'eval_args':{'split':{'RS':[.8,.1,.1]},'order':'TO','group_by':'user','mode':'full'},
++    'train_neg_sample_args':{'distribution':'uniform'},'worker':0,'gpu_id':'0' if args.gpu else '',
++    'checkpoint_dir':str(folder/'best'),'show_progress':False,
++    'use_kg':True,'kg_pack_path':str(kg),'kg_layers':1,'kg_cap':4,'intent_learnable':False,
++    'use_dynamic':True,'intent_filter_top_pct':20,'use_meta':False}
++cfg=ev.Config(model=model_arg,dataset='tiny',config_dict=cd)
++ds=ev.create_dataset(cfg)
++train,valid,test=ev.data_preparation(cfg,ds)
++klass=ev.get_model('BPR') if args.model=='BPR' else model_arg
++model=klass(cfg,train.dataset).to(cfg['device'])
++if getattr(model,'use_dynamic',False): ev._build_recency(model,train,cfg)
++trainer=ev.get_trainer(cfg['MODEL_TYPE'],cfg['model'])(cfg,model)
++trainer.saved_model_file=str(folder/'best/model.pth')
++fit_info={'best_epoch':None,'last_epoch':None}
++save=trainer._save_checkpoint
++def tracked_save(epoch,*a,**kw):
++    fit_info['best_epoch']=epoch
++    return save(epoch,*a,**kw)
++trainer._save_checkpoint=tracked_save
++# Real evaluation runs; deliberately lower later selection scores force stopping at epoch 5.
++evaluate=trainer._valid_epoch
++def fixed_selection(*a,**kw):
++    _,metrics=evaluate(*a,**kw)
++    return (1. if fit_info['last_epoch']==1 else .5),metrics
++trainer._valid_epoch=fixed_selection
++control=Control(folder/'control')
++if args.resume: control.request.unlink(missing_ok=True)
++epoch_step=trainer._train_epoch
++def request_after_epoch(data,epoch,*a,**kw):
++    loss=epoch_step(data,epoch,*a,**kw)
++    fit_info['last_epoch']=epoch
++    if epoch==args.pause_epoch: control.ask_pause()
++    return loss
++trainer._train_epoch=request_after_epoch
++try:
++    if args.plain:
++        result=trainer.fit(train,valid,saved=True,show_progress=False)
++    else:
++        result,_=fit_with_pause(trainer,train,valid,test,fit_info,control,folder/'resume.pt',
++                                {'spec':args.model,'seed':2020,'signature':args.signature},args.resume)
++except PauseRequested:
++    trainer.tensorboard.close()
++    raise SystemExit(75)
++trainer.tensorboard.close()
++final={k:v.detach().cpu().clone() for k,v in model.state_dict().items()}
++best=torch.load(trainer.saved_model_file,map_location='cpu')
++model.load_state_dict(best['state_dict'])
++model.eval()
++if hasattr(model,'eval_cache_items'): model.eval_cache_items()
++with torch.no_grad():
++    interaction=next(iter(test))[0].to(cfg['device'])
++    scores=model.full_sort_predict(interaction).cpu()
++torch.save({'final':final,'optimizer':trainer.optimizer.state_dict(),'best':best['state_dict'],
++            'best_epoch':best['epoch'],'fit_info':fit_info,'best_score':trainer.best_valid_score,
++            'cur_step':trainer.cur_step,'losses':trainer.train_loss_dict,'scores':scores,
++            'next_train_batch':next(iter(train)).interaction,'python_next':random.random(),
++            'numpy_next':np.random.random(8),'torch_next':torch.rand(8),
++            'cuda_next':torch.rand(8,device='cuda').cpu() if args.gpu else None},folder/'final.pt')
++print('WORKER PASSED',flush=True)
+diff --git a/tests/pause_queue_worker.py b/tests/pause_queue_worker.py
+new file mode 100644
+--- /dev/null
++++ b/tests/pause_queue_worker.py
+@@ -0,0 +1,23 @@
++"""Tiny end-to-end eval_slices queue test, with an injected user pause request."""
++import os
++from pathlib import Path
++import sys
++
++root=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(root))
++os.chdir(root)
++import eval_slices as ev
++from recbole.trainer import Trainer
++from ikgr_core.pause_resume import Control, PauseRequested
++
++original=Trainer._train_epoch
++def request_after_epoch(self,data,epoch,*a,**kw):
++    result=original(self,data,epoch,*a,**kw)
++    if os.environ.get('TEST_PAUSE_AFTER_FIRST')=='1' and epoch==0:
++        Control(os.environ['IKGR_CONTROL_DIR']).ask_pause()
++    return result
++Trainer._train_epoch=request_after_epoch
++try:
++    ev.main()
++except PauseRequested:
++    raise SystemExit(75)
+diff --git a/tests/test_lgcn_backbone.py b/tests/test_lgcn_backbone.py
+--- a/tests/test_lgcn_backbone.py
++++ b/tests/test_lgcn_backbone.py
+@@ -50,6 +50,7 @@
+         cd["show_progress"] = False
+         cd["device"] = "cpu"
+         cd["use_gpu"] = False
++        cd["gpu_id"] = ""  # RecBole 1.2.0 selects the device from gpu_id.
+         config = Config(model=model, dataset="ikgr-custom", config_dict=cd)
+         ds = create_dataset(config)
+         train, valid, test = data_preparation(config, ds)
+@@ -120,3 +121,34 @@
+     cfg_c, _, train_c = data(IKGR, {"use_kg": False, "lgcn_layers": 2, "use_corona": True})
+     with pytest.raises(ValueError):
+         IKGR(cfg_c, train_c.dataset)
++
++
++def test_intent_zero_identity_and_empty_filtered_rows(data, tmp_path):
++    from ikgr_core.model_ikgr import IKGR
++    cfg, ds, train = data(IKGR, {"use_kg": False})
++    kg_path = tmp_path / "tiny_kg.pt"
++    torch.save({"n_intents": 2, "intent_emb": torch.arange(32).reshape(2,16).float(),
++                "user_intents": {str(t):torch.tensor([0,1]) for t in ds.field2id_token[cfg["USER_ID_FIELD"]][1:]},
++                "item_intents": {str(t):torch.tensor([0,1]) for t in ds.field2id_token[cfg["ITEM_ID_FIELD"]][1:]}}, kg_path)
++    cfg["use_kg"] = True
++    cfg["kg_pack_path"] = str(kg_path)
++    cfg["intent_learnable"] = False
++    torch.manual_seed(7)
++    original = IKGR(cfg, train.dataset)
++    cfg["intent_filter_top_pct"] = 0
++    torch.manual_seed(7)
++    zero = IKGR(cfg, train.dataset)
++    assert all(torch.equal(value, zero.state_dict()[key]) for key,value in original.state_dict().items())
++    batch = next(iter(train))
++    original.eval(); zero.eval()
++    with torch.no_grad():
++        assert torch.equal(original.full_sort_predict(batch), zero.full_sort_predict(batch))
++    cfg["intent_filter_top_pct"] = 100
++    torch.manual_seed(7)
++    empty = IKGR(cfg, train.dataset)
++    assert not empty.user_intent_mask.any() and not empty.item_intent_mask.any()
++    assert torch.equal(original.intent_embedding.weight, empty.intent_embedding.weight)
++    loss = empty.calculate_loss(batch)
++    assert torch.isfinite(loss)
++    loss.backward()
++    assert torch.isfinite(empty.user_embedding.weight.grad).all()
+diff --git a/tests/smoke_e2e.py b/tests/smoke_e2e.py
+--- a/tests/smoke_e2e.py
++++ b/tests/smoke_e2e.py
+@@ -59,6 +59,7 @@
+                        "api_key": "offline-test", "model": "fake"})
+     cfg["rag"]["knn_k"] = 10
+     cfg["recbole"]["embedding_size"] = 32
++    cfg["recbole"]["gpu_id"] = ""  # RecBole 1.2 controls device selection through gpu_id.
+     yaml.safe_dump(cfg, open(os.path.join(wd, "config.yaml"), "w", encoding="utf-8"), sort_keys=False)
+ 
+     env = dict(os.environ, PYTHONPATH=os.path.join(ROOT, "tests", "fakes"),

@@ -1,1 +1,17 @@
 *.gz filter=lfs diff=lfs merge=lfs -text
+
+# Preserve published experiment fingerprints and original delivery bytes.
+run_k30_TO/todo_5_8/delivery/** -text
+eval_slices.py text eol=crlf
+ikgr_core/model_ikgr.py text eol=crlf
+ikgr_core/intent_filter.py text eol=lf
+ikgr_core/pause_resume.py text eol=lf
+scripts/run_todo_5_8.py text eol=lf
+configs/todo_5_8.yaml text eol=lf
+docs/todo_5_8_protocol.md text eol=lf
+tests/test_experiment_setup.py text eol=lf
+tests/test_pause_resume.py text eol=lf
+tests/pause_worker.py text eol=lf
+tests/pause_queue_worker.py text eol=lf
+tests/test_lgcn_backbone.py text eol=crlf
+tests/smoke_e2e.py text eol=crlf

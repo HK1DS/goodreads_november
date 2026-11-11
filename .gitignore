@@ -229,3 +229,7 @@ log_tensorboard/
 
 # Raw Goodreads dumps (downloaded by scripts/run_goodreads_revalidation.ps1; too large for git)
 /goodreads_*.json.gz
+
+# Published TODO 5/8 results and original delivery evidence
+!run_k30_TO/todo_5_8/
+!run_k30_TO/todo_5_8/delivery/logs/*.log

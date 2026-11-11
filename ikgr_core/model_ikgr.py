@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
+from ikgr_core.intent_filter import filter_intents
 
 # --- Robust imports for different RecBole versions
 try:
@@ -141,6 +143,7 @@ class IKGR(GeneralRecommender):
         self.reg_weight = float(_cfg(config, "reg_weight", 1e-6))
         self.use_kg = bool(_cfg(config, "use_kg", True))
         self.kg_pack_path = _cfg(config, "kg_pack_path", "run/kg_pack.pt")
+        self.intent_filter_top_pct = float(_cfg(config, "intent_filter_top_pct", 0))
         self.kg_layers = int(_cfg(config, "kg_layers", 1))
         self.intent_learnable = bool(_cfg(config, "intent_learnable", True))
         self.kg_cap = int(_cfg(config, "kg_cap", 64))
@@ -217,6 +220,9 @@ class IKGR(GeneralRecommender):
     # ---- KG construction (learnable intent nodes + normalized user/item<->intent adjacency)
     def _build_kg(self, dataset):
         pack = torch.load(self.kg_pack_path, map_location="cpu")
+        train_items = np.unique(dataset.inter_feat[self.ITEM_ID].cpu().numpy())
+        train_tokens = dataset.field2id_token[self.ITEM_ID][train_items]
+        pack, self.intent_filter_stats = filter_intents(pack, train_tokens, self.intent_filter_top_pct)
         raw = pack["intent_emb"].float()             # [n_intents, in_dim] (mpnet)
         self.n_intents = int(pack["n_intents"])
         in_dim = raw.shape[1]

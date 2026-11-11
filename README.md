@@ -1,5 +1,7 @@
 # Goodreads Children 실험: LLM intent · 메타데이터 · recency를 CF에 보완 신호로 쓰는 추천 파이프라인
 
+> **2026-11-11 업데이트 — TODO #5·#8 완료:** [MF 64차원 3-seed 결과 보고서](run_k30_TO/todo_5_8/README.md). 21회 학습 및 원본·통계·재현 코드 포함. validation 기준 5% intent 필터는 무필터 대비 NDCG를 소폭 개선했지만 no-intent 대비 정확도 우위는 확인되지 않았다. 기존 LightGCN 결과와 별도 실험으로 해석한다.
+
 한양대 데이터사이언스 졸업프로젝트(지도교수 김현준, 2026.09–12)의 Goodreads 도메인 실험 레포다.
 IKGR / DynLLM / CORONA에서 착안한 구성요소(LLM intent KG, 메타데이터 KG, recency 동적 프로필,
 그래프 후보생성·재랭킹)를 RecBole 위에 재구현하고, **언제 이 신호들이 협업 필터링(CF)을 보완하는지**를

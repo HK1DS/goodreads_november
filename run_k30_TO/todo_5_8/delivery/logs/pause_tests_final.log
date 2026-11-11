@@ -1,0 +1,28 @@
+...................................                                      [100%]
+============================== warnings summary ===============================
+tests/test_lgcn_backbone.py: 7 warnings
+tests/test_temporal_split.py: 5 warnings
+  C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Lib\site-packages\recbole\data\dataset\dataset.py:648: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+  The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+  
+  For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+  
+  
+    feat[field].fillna(value=0, inplace=True)
+
+tests/test_lgcn_backbone.py: 7 warnings
+tests/test_temporal_split.py: 5 warnings
+  C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Lib\site-packages\recbole\data\dataset\dataset.py:650: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+  The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+  
+  For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+  
+  
+    feat[field].fillna(value=feat[field].mean(), inplace=True)
+
+tests/test_lgcn_backbone.py::test_backbone_equals_recbole_lightgcn
+  C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Lib\site-packages\recbole\model\general_recommender\lightgcn.py:124: UserWarning: torch.sparse.SparseTensor(indices, values, shape, *, device=) is deprecated.  Please use torch.sparse_coo_tensor(indices, values, shape, dtype=, device=). (Triggered internally at ..\torch\csrc\utils\tensor_new.cpp:623.)
+    SparseL = torch.sparse.FloatTensor(i, data, torch.Size(L.shape))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+35 passed, 25 warnings in 333.81s (0:05:33)

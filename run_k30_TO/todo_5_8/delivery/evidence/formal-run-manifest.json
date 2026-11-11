@@ -1,0 +1,45 @@
+{
+  "authorized_at": "2026-11-10T02:11:12.308727+09:00",
+  "base_commit": "e75941a17ecc4b6dbf51a3a6eefd1f4d82bfd221",
+  "branch": "experiment/todo-5-8-mf",
+  "purpose": "formal TODO 5 and 8, 21 fits; user-requested pause only",
+  "files_sha256": {
+    "eval_slices.py": "901463a198d4989f55df608ec4a4f193375e5797342b1d42ef821a4775c78c7d",
+    "ikgr_core/model_ikgr.py": "06291412637e97ceed132aef4746d672ec31e9c94fd9cda75f12bce2b45ec2fa",
+    "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01",
+    "ikgr_core/intent_filter.py": "ce9a83faa2681aa51366da559889781eb64b25e5da36b2cd208b9ed92620ec13",
+    "ikgr_core/pause_resume.py": "b6399c03f6496a4ab11c73ab6a45965fe5fb4843c76a5f061c9fe586bee3a55f",
+    "scripts/run_todo_5_8.py": "72de703318d859a9559983f04a3a276c9fcf00c96058e5f18cb2152f911f78cd",
+    "configs/todo_5_8.yaml": "d3409ddbebe100bd14d48c4d8c76cd64c4411ba31e90900416f52128887a2388",
+    "docs/todo_5_8_protocol.md": "82e14eca917c068e1b23fea2239d78eda16949a641dd4f4838ec16ba33c24880"
+  },
+  "command": [
+    "python",
+    "-u",
+    "scripts/run_todo_5_8.py",
+    "--run",
+    "--phase",
+    "all",
+    "--check-output",
+    "../formal_preflight"
+  ],
+  "seeds": [
+    2020,
+    2021,
+    2022
+  ],
+  "specs": [
+    "BPR",
+    "IKGR_kgoff",
+    "IKGR_dyn_nointent",
+    "IKGR_dyn",
+    "IKGR_dyn_filter5",
+    "IKGR_dyn_filter10",
+    "IKGR_dyn_filter20"
+  ],
+  "eval_users_per_batch": 128,
+  "epochs_max": 40,
+  "training_batch": 2048,
+  "python": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\venv\\Scripts\\python.exe",
+  "output_directory": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\todo_5_8"
+}

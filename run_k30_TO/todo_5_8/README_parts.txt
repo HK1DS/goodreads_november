@@ -1,0 +1,1 @@
+Raw results split into 4 independent ZIP archives. Download all parts and extract them into the same directory. CSV filenames do not overlap. All 168 gzip files and original bytes are preserved. raw_manifest.json is identical in every part and lists SHA256 for all source files.

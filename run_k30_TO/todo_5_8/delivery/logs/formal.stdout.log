@@ -1,0 +1,108 @@
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+PREFLIGHT BPR: GPU forward/backward/full-sort OK
+PREFLIGHT IKGR_kgoff: GPU forward/backward/full-sort OK
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+PREFLIGHT IKGR_dyn_nointent: GPU forward/backward/full-sort OK
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+PREFLIGHT IKGR_dyn: GPU forward/backward/full-sort OK; removed=0
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+PREFLIGHT IKGR_dyn_filter5: GPU forward/backward/full-sort OK; removed=5739
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+PREFLIGHT IKGR_dyn_filter10: GPU forward/backward/full-sort OK; removed=11479
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+PREFLIGHT IKGR_dyn_filter20: GPU forward/backward/full-sort OK; removed=22958
+PREFLIGHT PASSED -> C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\formal_preflight\preflight.json
+
+===== BPR seed=2020 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+[BPR s2020] ndcg@10=0.0837 tail_recall@10=0.0112 cov@10=0.4999 best_epoch=37 (615.1s)
+[BPR_pop0p25 s2020] ndcg@10=0.052 tail_recall@10=0.0222 cov@10=0.8535 best_epoch=37 (615.1s)
+[BPR_pop0p5 s2020] ndcg@10=0.0158 tail_recall@10=0.0269 cov@10=0.8523 best_epoch=37 (615.1s)
+[BPR_pop1p0 s2020] ndcg@10=0.0069 tail_recall@10=0.0201 cov@10=0.5161 best_epoch=37 (615.1s)
+
+===== BPR seed=2021 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+[BPR s2021] ndcg@10=0.0794 tail_recall@10=0.0112 cov@10=0.5116 best_epoch=39 (605.3s)
+[BPR_pop0p25 s2021] ndcg@10=0.0486 tail_recall@10=0.0233 cov@10=0.8557 best_epoch=39 (605.3s)
+[BPR_pop0p5 s2021] ndcg@10=0.016 tail_recall@10=0.0283 cov@10=0.8567 best_epoch=39 (605.3s)
+[BPR_pop1p0 s2021] ndcg@10=0.0072 tail_recall@10=0.021 cov@10=0.5244 best_epoch=39 (605.3s)
+
+===== BPR seed=2022 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+[BPR s2022] ndcg@10=0.0823 tail_recall@10=0.0115 cov@10=0.5004 best_epoch=37 (602.7s)
+[BPR_pop0p25 s2022] ndcg@10=0.051 tail_recall@10=0.0238 cov@10=0.8482 best_epoch=37 (602.7s)
+[BPR_pop0p5 s2022] ndcg@10=0.0161 tail_recall@10=0.0282 cov@10=0.8409 best_epoch=37 (602.7s)
+[BPR_pop1p0 s2022] ndcg@10=0.0071 tail_recall@10=0.021 cov@10=0.5105 best_epoch=37 (602.7s)
+
+===== IKGR_kgoff seed=2020 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+[IKGR_kgoff s2020] ndcg@10=0.0827 tail_recall@10=0.011 cov@10=0.4948 best_epoch=37 (715.6s)
+[IKGR_kgoff_pop0p25 s2020] ndcg@10=0.0515 tail_recall@10=0.0227 cov@10=0.8503 best_epoch=37 (715.6s)
+[IKGR_kgoff_pop0p5 s2020] ndcg@10=0.0167 tail_recall@10=0.0277 cov@10=0.8567 best_epoch=37 (715.6s)
+[IKGR_kgoff_pop1p0 s2020] ndcg@10=0.007 tail_recall@10=0.0208 cov@10=0.5179 best_epoch=37 (715.6s)
+
+===== IKGR_kgoff seed=2021 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+[IKGR_kgoff s2021] ndcg@10=0.0791 tail_recall@10=0.0111 cov@10=0.5132 best_epoch=39 (713.2s)
+[IKGR_kgoff_pop0p25 s2021] ndcg@10=0.0484 tail_recall@10=0.0231 cov@10=0.8576 best_epoch=39 (713.2s)
+[IKGR_kgoff_pop0p5 s2021] ndcg@10=0.016 tail_recall@10=0.028 cov@10=0.8561 best_epoch=39 (713.2s)
+[IKGR_kgoff_pop1p0 s2021] ndcg@10=0.0071 tail_recall@10=0.0211 cov@10=0.5217 best_epoch=39 (713.2s)
+
+===== IKGR_kgoff seed=2022 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+[IKGR_kgoff s2022] ndcg@10=0.0815 tail_recall@10=0.0112 cov@10=0.497 best_epoch=37 (700.4s)
+[IKGR_kgoff_pop0p25 s2022] ndcg@10=0.05 tail_recall@10=0.0231 cov@10=0.8458 best_epoch=37 (700.4s)
+[IKGR_kgoff_pop0p5 s2022] ndcg@10=0.016 tail_recall@10=0.0279 cov@10=0.8474 best_epoch=37 (700.4s)
+[IKGR_kgoff_pop1p0 s2022] ndcg@10=0.0069 tail_recall@10=0.0205 cov@10=0.5103 best_epoch=37 (700.4s)
+
+===== IKGR_dyn_nointent seed=2020 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+[IKGR_dyn_nointent s2020] ndcg@10=0.0861 tail_recall@10=0.0137 cov@10=0.4994 best_epoch=23 (1164.2s)
+[IKGR_dyn_nointent_pop0p25 s2020] ndcg@10=0.0602 tail_recall@10=0.0247 cov@10=0.805 best_epoch=23 (1164.2s)
+[IKGR_dyn_nointent_pop0p5 s2020] ndcg@10=0.0243 tail_recall@10=0.0307 cov@10=0.8513 best_epoch=23 (1164.2s)
+[IKGR_dyn_nointent_pop1p0 s2020] ndcg@10=0.0089 tail_recall@10=0.0253 cov@10=0.5381 best_epoch=23 (1164.2s)
+
+===== IKGR_dyn_nointent seed=2021 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+[IKGR_dyn_nointent s2021] ndcg@10=0.0851 tail_recall@10=0.0123 cov@10=0.4321 best_epoch=15 (858.0s)
+[IKGR_dyn_nointent_pop0p25 s2021] ndcg@10=0.0609 tail_recall@10=0.022 cov@10=0.7292 best_epoch=15 (858.0s)
+[IKGR_dyn_nointent_pop0p5 s2021] ndcg@10=0.0223 tail_recall@10=0.0275 cov@10=0.7955 best_epoch=15 (858.0s)
+[IKGR_dyn_nointent_pop1p0 s2021] ndcg@10=0.0081 tail_recall@10=0.0228 cov@10=0.4774 best_epoch=15 (858.0s)
+
+===== IKGR_dyn_nointent seed=2022 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+[IKGR_dyn_nointent s2022] ndcg@10=0.0836 tail_recall@10=0.0125 cov@10=0.4222 best_epoch=13 (786.8s)
+[IKGR_dyn_nointent_pop0p25 s2022] ndcg@10=0.0598 tail_recall@10=0.0227 cov@10=0.7115 best_epoch=13 (786.8s)
+[IKGR_dyn_nointent_pop0p5 s2022] ndcg@10=0.0209 tail_recall@10=0.0287 cov@10=0.7754 best_epoch=13 (786.8s)
+[IKGR_dyn_nointent_pop1p0 s2022] ndcg@10=0.0083 tail_recall@10=0.0235 cov@10=0.4508 best_epoch=13 (786.8s)
+
+===== IKGR_dyn seed=2020 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+[IKGR_dyn s2020] ndcg@10=0.085 tail_recall@10=0.0124 cov@10=0.4193 best_epoch=13 (863.9s)
+[IKGR_dyn_pop0p25 s2020] ndcg@10=0.0613 tail_recall@10=0.0221 cov@10=0.7043 best_epoch=13 (863.9s)
+[IKGR_dyn_pop0p5 s2020] ndcg@10=0.0226 tail_recall@10=0.028 cov@10=0.7761 best_epoch=13 (863.9s)
+[IKGR_dyn_pop1p0 s2020] ndcg@10=0.0082 tail_recall@10=0.0231 cov@10=0.4618 best_epoch=13 (863.9s)
+
+===== IKGR_dyn seed=2021 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+[IKGR_dyn s2021] ndcg@10=0.0838 tail_recall@10=0.0134 cov@10=0.4599 best_epoch=17 (1022.4s)
+[IKGR_dyn_pop0p25 s2021] ndcg@10=0.0598 tail_recall@10=0.0239 cov@10=0.7516 best_epoch=17 (1022.4s)
+[IKGR_dyn_pop0p5 s2021] ndcg@10=0.0237 tail_recall@10=0.0293 cov@10=0.8159 best_epoch=17 (1022.4s)
+[IKGR_dyn_pop1p0 s2021] ndcg@10=0.0085 tail_recall@10=0.0248 cov@10=0.5034 best_epoch=17 (1022.4s)
+
+===== IKGR_dyn seed=2022 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+  [recency] built for 62142 users from 5042389 train inters (N=50)
+[IKGR_dyn s2022] ndcg@10=0.0847 tail_recall@10=0.0138 cov@10=0.5198 best_epoch=25 (1338.2s)
+[IKGR_dyn_pop0p25 s2022] ndcg@10=0.059 tail_recall@10=0.0244 cov@10=0.8157 best_epoch=25 (1338.2s)
+[IKGR_dyn_pop0p5 s2022] ndcg@10=0.0241 tail_recall@10=0.0303 cov@10=0.8641 best_epoch=25 (1338.2s)
+[IKGR_dyn_pop1p0 s2022] ndcg@10=0.0086 tail_recall@10=0.0253 cov@10=0.5493 best_epoch=25 (1338.2s)
+
+===== IKGR_dyn_filter5 seed=2020 (TO) =====
+  [leakage-guard] OK: 2478824 profile pairs (61874 users) all in the TO train split; KG user intents consistent.
+  [recency] built for 62142 users from 5042389 train inters (N=50)

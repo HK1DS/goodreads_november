@@ -59,6 +59,7 @@ def main():
                        "api_key": "offline-test", "model": "fake"})
     cfg["rag"]["knn_k"] = 10
     cfg["recbole"]["embedding_size"] = 32
+    cfg["recbole"]["gpu_id"] = ""  # RecBole 1.2 controls device selection through gpu_id.
     yaml.safe_dump(cfg, open(os.path.join(wd, "config.yaml"), "w", encoding="utf-8"), sort_keys=False)
 
     env = dict(os.environ, PYTHONPATH=os.path.join(ROOT, "tests", "fakes"),

@@ -32,7 +32,9 @@ Env overrides:
   IKGR_DUMP_VALID=1               also dump per-user VALIDATION metrics (for gate/selection work)
   IKGR_REQUIRE_PROVENANCE=1       refuse to run KG specs without a profile provenance file
 """
-import os, json, time, math, yaml, hashlib, random
+import os, json, time, math, yaml, hashlib, random, platform
+import recbole
+import scipy
 import scipy.sparse as _sp
 if not hasattr(_sp.dok_matrix, "_update"):
     # RecBole 1.2.0 builds LightGCN's normalized adjacency with dok_matrix._update(),
@@ -54,11 +56,13 @@ from recbole.config import Config
 from recbole.data import create_dataset, data_preparation
 from recbole.utils import get_model, get_trainer, init_seed
 from ikgr_core.model_ikgr import IKGR as IKGRModel
+from ikgr_core.pause_resume import Control, PauseRequested, PAUSED_EXIT, fit_with_pause
 
 KS = [10, 30]
 MAXK = max(KS)
 COV_K = 10
-EVAL_SCHEMA_VERSION = 3   # 3: train-only pop/activity, early stopping, leakage guard
+EVAL_SCHEMA_VERSION = 5   # request-only epoch-boundary pause/resume
+PROCESS_HASH_SEED = os.environ.get("PYTHONHASHSEED")
 
 
 def _set_determinism(seed):
@@ -109,7 +113,8 @@ def _file_sha256(path, chunk=1 << 22):
 
 def _experiment_context(name, model_arg, extra, rb, paths, split):
     """Fingerprint evaluation inputs so stale seed results cannot be reused."""
-    source_paths = [__file__, "ikgr_core/model_ikgr.py", "ikgr_core/corona_retriever.py"]
+    source_paths = [__file__, "ikgr_core/model_ikgr.py", "ikgr_core/corona_retriever.py", "ikgr_core/intent_filter.py",
+                    "ikgr_core/pause_resume.py", "scripts/run_todo_5_8.py"]
     code = {}
     for path in source_paths:
         try:
@@ -124,6 +129,11 @@ def _experiment_context(name, model_arg, extra, rb, paths, split):
         p = paths.get(key)
         if p and os.path.exists(p):
             data_fp[key] = _file_sha256(p)
+    atomic = os.path.join(os.path.dirname(paths["inter_file"]), rb["dataset"], rb["dataset"] + ".inter")
+    if os.path.exists(atomic):
+        data_fp["atomic_inter"] = _file_sha256(atomic)
+    if paths.get("profile_provenance") and os.path.exists(paths["profile_provenance"] + ".meta.json"):
+        data_fp["provenance_meta"] = _file_sha256(paths["profile_provenance"] + ".meta.json")
     context = {
         "schema": EVAL_SCHEMA_VERSION,
         "spec": name,
@@ -135,6 +145,12 @@ def _experiment_context(name, model_arg, extra, rb, paths, split):
         "data_fingerprint": data_fp,
         "recbole": rb,
         "code": code,
+        "runtime": {"torch": torch.__version__, "cuda": torch.version.cuda,
+                    "python": platform.python_version(), "recbole": recbole.__version__,
+                    "numpy": np.__version__, "scipy": scipy.__version__, "pandas": pd.__version__,
+                    "process_hash_seed": PROCESS_HASH_SEED,
+                    "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() and torch.cuda.device_count() > 0 else None,
+                    "torch_threads": torch.get_num_threads()},
     }
     encoded = json.dumps(context, sort_keys=True, ensure_ascii=True, default=str).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()[:16], context
@@ -187,7 +203,44 @@ def _config(rb, paths, extra, seed):
         cd["eval_args"] = {"split": {"RS": [0.7, 0.1, 0.2]}, "order": "TO",
                            "group_by": None, "mode": "full"}
     cd.update(extra)
+    for key in ("train_batch_size", "eval_batch_size", "eval_users_per_batch", "worker", "gpu_id", "require_cuda"):
+        if key in rb:
+            cd[key] = rb[key]
     return cd
+
+
+def _configure_eval_batch(config, dataset):
+    """RecBole's full-sort eval_batch_size counts user-item scores, not users."""
+    users = config["eval_users_per_batch"]
+    if users is not None:
+        if isinstance(users, bool) or int(users) != users or users < 1:
+            raise ValueError("eval_users_per_batch must be a positive integer")
+        config["eval_batch_size"] = int(users) * int(dataset.item_num)
+    if config["require_cuda"] and config["device"].type != "cuda":
+        raise RuntimeError("CUDA is required for this experiment; CPU fallback is disabled")
+
+
+def _seed_complete(results, names, seed, pu_dir, dump_valid):
+    phases = ("test", "valid") if dump_valid else ("test",)
+    for name in names:
+        result = results[name]["seeds"].get(str(seed))
+        if result is None or not all(os.path.isfile(os.path.join(pu_dir, f"{name}__s{seed}__{phase}.csv.gz")) for phase in phases):
+            return False
+        if result.get("intent_filter"):
+            ref = result["intent_filter"]
+            path = os.path.join(os.path.dirname(pu_dir), ref["file"])
+            if not os.path.isfile(path) or _file_sha256(path) != ref["sha256"]:
+                return False
+    return True
+
+
+def _atomic_json(path, value):
+    temporary = str(path) + ".tmp"
+    with open(temporary, "w", encoding="utf-8") as f:
+        json.dump(value, f, ensure_ascii=False, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(temporary, path)
 
 
 def _build_recency(model, train_data, config):
@@ -365,7 +418,7 @@ def _collect(model, eval_data, config, variants, retriever, cand_m, pop_z, n_ite
     return per_user, cand_stats
 
 
-def _train_and_collect(model_arg, extra, rb, paths, seed, split):
+def _train_and_collect(model_arg, extra, rb, paths, seed, split, resume_context=None):
     _set_determinism(seed)
     extra = dict(extra)
     # Eval-only knobs (candidate restriction / reranking): not model parameters.
@@ -381,6 +434,7 @@ def _train_and_collect(model_arg, extra, rb, paths, seed, split):
     os.makedirs(cfg_dict["checkpoint_dir"], exist_ok=True)
     config = Config(model=model_arg, dataset=rb["dataset"], config_dict=cfg_dict)
     dataset = create_dataset(config)
+    _configure_eval_batch(config, dataset)
     train_data, valid_data, test_data = data_preparation(config, dataset)
     guard = _check_profile_leakage(paths, guard_extra, train_data, config, split)
     item_pop, user_act = _train_stats(train_data, config)
@@ -410,10 +464,20 @@ def _train_and_collect(model_arg, extra, rb, paths, seed, split):
 
     def _cb(epoch_idx, valid_score):
         fit_info["last_epoch"] = int(epoch_idx)
-    t0 = time.time()
-    best_score, best_result = trainer.fit(train_data, valid_data, saved=True, show_progress=False,
-                                          callback_fn=_cb)
-    train_sec = round(time.time() - t0, 1)
+    try:
+        if resume_context is not None:
+            identity = resume_context["identity"]
+            trainer.saved_model_file = os.path.join(cfg_dict["checkpoint_dir"], f'{identity["spec"]}__s{seed}_best.pth')
+            (best_score, best_result), elapsed = fit_with_pause(
+                trainer, train_data, valid_data, test_data, fit_info, **resume_context)
+            train_sec = round(elapsed, 1)
+        else:
+            t0 = time.time()
+            best_score, best_result = trainer.fit(train_data, valid_data, saved=True, show_progress=False,
+                                                  callback_fn=_cb)
+            train_sec = round(time.time() - t0, 1)
+    finally:
+        trainer.tensorboard.close()
     fit_info["best_valid_score"] = None if best_score is None else float(best_score)
     fit_info["max_epochs"] = int(config["epochs"])
     smf = getattr(trainer, "saved_model_file", None)
@@ -445,7 +509,10 @@ def _train_and_collect(model_arg, extra, rb, paths, seed, split):
     uid_tokens = dataset.field2id_token[config["USER_ID_FIELD"]]
     return {"test": test_pu, "valid": valid_pu, "item_pop": item_pop, "train_sec": train_sec,
             "n_items": n_items, "cand_stats": cand_stats, "fit": fit_info, "guard": guard,
-            "uid_tokens": uid_tokens}
+            "uid_tokens": uid_tokens, "intent_filter": getattr(model, "intent_filter_stats", None),
+            "execution": {"device": str(config["device"]), "train_batch_size": config["train_batch_size"],
+                          "eval_batch_size": config["eval_batch_size"], "eval_users_per_batch": valid_data.step,
+                          "n_items_including_padding": n_items}}
 
 
 def _user_metrics(topk, rel_set, k):
@@ -592,7 +659,7 @@ def _aggregate(per_seed):
 def build_specs(paths):
     kg = os.path.abspath(paths.get("kg_pack", "run/kg_pack.pt"))
     meta = os.path.abspath(paths.get("meta_kg_pack", "run/meta_kg_pack.pt"))
-    return {
+    specs = {
         "IKGR_kgoff":   (IKGRModel, {"use_kg": False}),
         "IKGR_kgon_L1": (IKGRModel, {"use_kg": True, "kg_pack_path": kg, "kg_layers": 1, "kg_cap": 32}),
         "IKGR_kgon_L1_frozen": (IKGRModel, {"use_kg": True, "kg_pack_path": kg, "kg_layers": 1,
@@ -645,6 +712,10 @@ def build_specs(paths):
         "BPR":          ("BPR", {}),
         "LightGCN":     ("LightGCN", {}),
     }
+    for pct in (5, 10, 20):
+        model, extra = specs["IKGR_dyn"]
+        specs[f"IKGR_dyn_filter{pct}"] = (model, dict(extra, intent_filter_top_pct=pct))
+    return specs
 
 
 def main():
@@ -664,6 +735,7 @@ def main():
     pu_dir = os.path.join(wd, f"per_user_{split}")
     os.makedirs(pu_dir, exist_ok=True)
     results = json.load(open(out_path, encoding="utf-8")) if os.path.exists(out_path) else {}
+    control = Control(os.environ["IKGR_CONTROL_DIR"]) if os.environ.get("IKGR_CONTROL_DIR") else None
 
     for name in spec_names:
         model_arg, extra = all_specs[name]
@@ -684,15 +756,33 @@ def main():
                     print(f"[invalidate] {rname}: evaluation inputs changed", flush=True)
                 results[rname] = {"run_signature": sig, "run_context": ctx, "seeds": {}}
         for seed in seeds:
-            if all(str(seed) in results[r]["seeds"] for r in result_names.values()):
+            if control:
+                control.boundary()
+            if _seed_complete(results, result_names.values(), seed, pu_dir, os.environ.get("IKGR_DUMP_VALID") == "1"):
                 print(f"[skip] {name} seed={seed}", flush=True); continue
             print(f"\n===== {name} seed={seed} ({split}) =====", flush=True)
-            out = _train_and_collect(model_arg, run_extra, rb, paths, seed, split)
+            resume_context = None
+            if control:
+                resume_context = dict(control=control, checkpoint=os.path.join(wd, "resume", f"{name}__s{seed}.pt"),
+                    identity={"spec":name,"seed":seed,"signature":signature,"pop_grid":lambdas,
+                              "dump_valid":os.environ.get("IKGR_DUMP_VALID") == "1"},
+                    allow_resume=os.environ.get("IKGR_RESUME_ALLOWED") == "1")
+                control.status('preparing_run', spec=name, seed=seed)
+            out = _train_and_collect(model_arg, run_extra, rb, paths, seed, split, resume_context=resume_context)
+            filter_ref = None
+            if out["intent_filter"] is not None:
+                filter_file = os.path.join(wd, f"intent_filter_{name}__s{seed}.json")
+                _atomic_json(filter_file, out["intent_filter"])
+                filter_ref = {"file": os.path.basename(filter_file), "sha256": _file_sha256(filter_file),
+                              "top_pct": out["intent_filter"]["top_pct"], "removed_count": out["intent_filter"]["removed_count"]}
             for suffix, rname in result_names.items():
                 rep = slice_report(out["test"][suffix], out["item_pop"], out["n_items"])
                 rep["train_sec"] = out["train_sec"]
                 rep["fit"] = out["fit"]
                 rep["leakage_guard"] = out["guard"]
+                rep["execution"] = out["execution"]
+                if filter_ref is not None:
+                    rep["intent_filter"] = filter_ref
                 if out["cand_stats"] and suffix == variants[0][0]:
                     rep.update(out["cand_stats"])
                 results[rname]["seeds"][str(seed)] = rep
@@ -705,10 +795,17 @@ def main():
                 print(f"[{rname} s{seed}] ndcg@10={rep['overall']['ndcg@10']} "
                       f"tail_recall@10={rep['long_tail']['recall@10']} cov@10={rep['coverage@10']} "
                       f"best_epoch={out['fit']['best_epoch']} ({out['train_sec']}s)", flush=True)
-            with open(out_path, "w", encoding="utf-8") as f:
-                json.dump(results, f, ensure_ascii=False, indent=2)
+            _atomic_json(out_path, results)
+            if resume_context and os.path.isfile(resume_context["checkpoint"]):
+                os.remove(resume_context["checkpoint"])
+    if control:
+        control.boundary()
     print("\nALL DONE")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except PauseRequested as exc:
+        print(f"PAUSED: {exc}", flush=True)
+        raise SystemExit(PAUSED_EXIT)

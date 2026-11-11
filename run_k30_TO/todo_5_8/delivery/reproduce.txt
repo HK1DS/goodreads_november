@@ -1,0 +1,10 @@
+Base: e75941a17ecc4b6dbf51a3a6eefd1f4d82bfd221
+Repository: https://github.com/HK1DS/goodreads_november
+1. Clone and checkout the base commit.
+2. git apply prepared-experiment.patch
+3. Create a dedicated Python 3.11.18 environment; use environment-requirements.txt (torch2.3.0+cu121).
+4. Restore data_bundle with python scripts/unpack_data_bundle.py.
+5. python scripts/run_todo_5_8.py --check
+6. python scripts/run_todo_5_8.py --run --phase all
+Use a clean output directory; delivered results are under results/ for review. Original paths are recorded in manifests.
+Extra analysis: work/prepare_delivery_files.py; paired_compare.py; fixed seeds2020/2021/2022, bootstrap10000 seed0.

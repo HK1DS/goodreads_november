@@ -1,0 +1,76 @@
+$ C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Scripts\python.exe C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\repo\tests\make_synthetic_goodreads.py --out_dir C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\smoke-pause-final
+$ C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Scripts\python.exe run_pipeline.py --split TO --dump_valid --k 5 --yes --epochs 6 --seeds 2020,2021 --pop_grid 0.5 --specs IKGR_kgoff,BPR,LightGCN,IKGR_full_hetero,IKGR_dyn_nointent,IKGR_dyn,IKGR_cand_db
+$ C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Scripts\python.exe run_pipeline.py --split TO_GLOBAL --k 5 --yes --epochs 6 --seeds 2020,2021 --pop_grid 0.5 --specs IKGR_kgoff,BPR,LightGCN,IKGR_full_hetero,IKGR_dyn_nointent,IKGR_dyn,IKGR_cand_db
+$ C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Scripts\python.exe run_pipeline.py --split TO --dump_valid --k 5 --yes --epochs 6 --seeds 2020,2021 --pop_grid 0.5 --specs IKGR_kgoff,BPR,LightGCN,IKGR_full_hetero,IKGR_dyn_nointent,IKGR_dyn,IKGR_cand_db
+[smoke] resume: B/C/D skipped, 0 LLM calls, no result invalidated
+[smoke] TO_GLOBAL cold0 users = 34; fake LLM calls TO=1301 TO_GLOBAL=976
+$ C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Scripts\python.exe eval_slices.py
+$ C:\Users\SLemon\Documents\Codex\2026-11-09\https-github-com-hk1ds-goodreads-november\work\venv\Scripts\python.exe eval_slices.py
+[smoke] negative leakage checks OK
+# Paired comparisons (TO, test)
+
+Unit = user (metric averaged over seeds first). CI = 95% bootstrap over users; p = Wilcoxon signed-rank; W/T/L = % users where A wins/ties/loses.
+
+| A vs B | metric | users | A | B | diff (rel) | 95% CI | p | W/T/L % |
+|---|---|---:|---:|---:|---:|---|---:|---|
+| IKGR_dyn vs BPR | ndcg@10 | 400 | 0.0723 | 0.0338 | +0.0385 (+113.9%) | [+0.0284, +0.0491] | 1e-10 | 45/32/22 |
+| IKGR_dyn vs BPR | tail_recall@10 | 397 | 0.0641 | 0.0461 | +0.0180 (+39.0%) | [+0.0040, +0.0317] | 0.0073 | 25/59/16 |
+| IKGR_dyn vs LightGCN | ndcg@10 | 400 | 0.0723 | 0.0721 | +0.0002 (+0.2%) | [-0.0112, +0.0117] | 0.83 | 37/25/38 |
+| IKGR_dyn vs LightGCN | tail_recall@10 | 397 | 0.0641 | 0.1024 | -0.0384 (-37.4%) | [-0.0556, -0.0220] | 7.8e-05 | 19/47/34 |
+| IKGR_dyn vs IKGR_kgoff | ndcg@10 | 400 | 0.0723 | 0.0308 | +0.0415 (+134.7%) | [+0.0321, +0.0513] | 8.9e-14 | 48/33/19 |
+| IKGR_dyn vs IKGR_kgoff | tail_recall@10 | 397 | 0.0641 | 0.0461 | +0.0180 (+39.0%) | [+0.0042, +0.0314] | 0.0065 | 25/59/16 |
+| IKGR_dyn vs IKGR_dyn_nointent | ndcg@10 | 400 | 0.0723 | 0.0848 | -0.0125 (-14.8%) | [-0.0236, -0.0013] | 0.044 | 35/20/44 |
+| IKGR_dyn vs IKGR_dyn_nointent | tail_recall@10 | 397 | 0.0641 | 0.1271 | -0.0630 (-49.6%) | [-0.0811, -0.0462] | 8.8e-12 | 14/45/41 |
+
+**IKGR_dyn vs BPR — ndcg@10 by train-activity quintile**
+
+| bucket | activity ≤ | users | diff | win % | loss % |
+|---|---:|---:|---:|---:|---:|
+| Q1 | 31 | 84 | +0.0302 | 35 | 15 |
+| Q2 | 36 | 89 | +0.0416 | 46 | 17 |
+| Q3 | 40 | 67 | +0.0473 | 52 | 19 |
+| Q4 | 45 | 87 | +0.0307 | 48 | 30 |
+| Q5 | 54 | 73 | +0.0454 | 47 | 30 |
+
+**IKGR_dyn vs BPR — tail_recall@10 by train-activity quintile**
+
+| bucket | activity ≤ | users | diff | win % | loss % |
+|---|---:|---:|---:|---:|---:|
+| Q1 | 31 | 81 | +0.0134 | 16 | 11 |
+| Q2 | 36 | 89 | +0.0206 | 25 | 15 |
+| Q3 | 41 | 87 | +0.0289 | 28 | 16 |
+| Q4 | 45 | 67 | -0.0040 | 31 | 24 |
+| Q5 | 54 | 73 | +0.0269 | 26 | 14 |
+
+**IKGR_dyn vs LightGCN — ndcg@10 by train-activity quintile**
+
+| bucket | activity ≤ | users | diff | win % | loss % |
+|---|---:|---:|---:|---:|---:|
+| Q1 | 31 | 84 | +0.0120 | 33 | 29 |
+| Q2 | 36 | 89 | +0.0068 | 38 | 37 |
+| Q3 | 40 | 67 | +0.0125 | 49 | 31 |
+| Q4 | 45 | 87 | -0.0195 | 32 | 47 |
+| Q5 | 54 | 73 | -0.0094 | 36 | 44 |
+
+**IKGR_dyn vs LightGCN — tail_recall@10 by train-activity quintile**
+
+| bucket | activity ≤ | users | diff | win % | loss % |
+|---|---:|---:|---:|---:|---:|
+| Q1 | 31 | 81 | -0.0226 | 19 | 22 |
+| Q2 | 36 | 89 | -0.0309 | 20 | 35 |
+| Q3 | 41 | 87 | -0.0254 | 22 | 28 |
+| Q4 | 45 | 67 | -0.0535 | 16 | 42 |
+| Q5 | 54 | 73 | -0.0664 | 19 | 44 |
+
+**IKGR_dyn vs IKGR_kgoff — ndcg@10 by train-activity quintile**
+
+| bucket | activity ≤ | users | diff | win % | loss % |
+|---|---:|---:|---:|---:|---:|
+| Q1 | 31 | 84 | +0.0340 | 35 | 15 |
+| Q2 | 36 | 89 | +0.0478 | 49 | 16 |
+| Q3 | 40 | 67 | +0.0423 | 54 | 19 |
+| Q4 | 45 | 87 | +0.0410 | 51 | 20 |
+| Q5 | 54 | 73 | +0.0422 | 51 | 27 |
+
+**IKGR_dyn vs IKGR_kgoff —
+SMOKE PASSED

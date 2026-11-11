@@ -1,0 +1,21 @@
+{
+  "top_pct": 0.0,
+  "n_intents": 142218,
+  "active_train_item_intents": 114794,
+  "train_items": 27966,
+  "removed_count": 0,
+  "removed": [],
+  "definition": "distinct train items; positive-degree intents only; floor; degree DESC, ID ASC; both edge types",
+  "user_intents": {
+    "pack_edges_before": 1681720,
+    "pack_edges_after": 1681720,
+    "pack_empty_before": 0,
+    "pack_empty_after": 0
+  },
+  "item_intents": {
+    "pack_edges_before": 749861,
+    "pack_edges_after": 749861,
+    "pack_empty_before": 0,
+    "pack_empty_after": 0
+  }
+}

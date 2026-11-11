@@ -1,0 +1,26 @@
+# Dedicated, full-data experiment configuration. Temporary benchmark results are not reused.
+paths:
+  input_csv: data/kc_k30/profiles_k30_TO.csv
+  profile_provenance: data/kc_k30/profile_provenance_k30_TO.csv.gz
+  inter_file: data/kc_k30/interactions_k30.csv
+  kg_pack: run_k30_TO/kg_pack.pt
+  meta_kg_pack: run_k30_TO/meta_kg_pack.pt
+  workdir: run_k30_TO/todo_5_8/
+recbole:
+  model: IKGR
+  dataset: ikgr-custom
+  topk: [10, 30]
+  metrics: [Recall, MRR, NDCG, Hit, Precision]
+  embedding_size: 64
+  epochs: 40
+  eval_step: 2
+  stopping_step: 3
+  valid_metric: NDCG@10
+  learning_rate: 0.001
+  reg_weight: 0.000001
+  dropout: 0.1
+  train_batch_size: 2048
+  eval_users_per_batch: 128
+  worker: 0
+  gpu_id: '0'
+  require_cuda: true

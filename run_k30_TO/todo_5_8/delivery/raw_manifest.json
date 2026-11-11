@@ -1,0 +1,1010 @@
+[
+  {
+    "file": "BPR__s2020__valid.csv.gz",
+    "bytes": 2291174,
+    "rows": 62142,
+    "sha256": "eee4d993180ae1c97916079bb0289ae74643acbec6eca463bf2ed6f3f575e0ec"
+  },
+  {
+    "file": "BPR__s2020__test.csv.gz",
+    "bytes": 2215814,
+    "rows": 62142,
+    "sha256": "c9d4e1045c16d8ba8b20d18c202018502982a3f61d0daf190baeec6c1e3c2264"
+  },
+  {
+    "file": "BPR_pop0p25__s2020__valid.csv.gz",
+    "bytes": 2122035,
+    "rows": 62142,
+    "sha256": "fb924cee0a1f66eadfb004c84c7372024a6e8a33de999ba45b2bc93b57690d70"
+  },
+  {
+    "file": "BPR_pop0p25__s2020__test.csv.gz",
+    "bytes": 2024533,
+    "rows": 62142,
+    "sha256": "76957eef5a282351e8668b264361f184bcd5256fb09a4902f4aec211c3fb9b55"
+  },
+  {
+    "file": "BPR_pop0p5__s2020__valid.csv.gz",
+    "bytes": 1853048,
+    "rows": 62142,
+    "sha256": "6b5c7f7af71acbac263287fc7c8fbbf6172c55abcf942afe7651c6e8e015bb9d"
+  },
+  {
+    "file": "BPR_pop0p5__s2020__test.csv.gz",
+    "bytes": 1792674,
+    "rows": 62142,
+    "sha256": "53964a53550fc2c3e02cebd439f39ac0afbb3ffc7a4f197fdbe56ab0a0030832"
+  },
+  {
+    "file": "BPR_pop1p0__s2020__valid.csv.gz",
+    "bytes": 1710981,
+    "rows": 62142,
+    "sha256": "7c17505d1672f66da60b747d52b5a1e0bbed2e19393983e8338388aab57cdf5e"
+  },
+  {
+    "file": "BPR_pop1p0__s2020__test.csv.gz",
+    "bytes": 1696079,
+    "rows": 62142,
+    "sha256": "f20fd2cb8cac1568fbed5a3548cd7aee584093ad4aad7aa5d49aff273a0a13eb"
+  },
+  {
+    "file": "BPR__s2021__valid.csv.gz",
+    "bytes": 2288176,
+    "rows": 62142,
+    "sha256": "08c415a025b9688fece35cd5165915deffd9aee319356585d629ebf6d570f377"
+  },
+  {
+    "file": "BPR__s2021__test.csv.gz",
+    "bytes": 2209760,
+    "rows": 62142,
+    "sha256": "347f9a229ba87cdd434aa28ff37c707feb9b14d05ca5399af21430a887075ad3"
+  },
+  {
+    "file": "BPR_pop0p25__s2021__valid.csv.gz",
+    "bytes": 2113934,
+    "rows": 62142,
+    "sha256": "89e7cbbc4e70697e682a42050f2e5fd65b11c7bbda7d6f22d38a1525904fb549"
+  },
+  {
+    "file": "BPR_pop0p25__s2021__test.csv.gz",
+    "bytes": 2016499,
+    "rows": 62142,
+    "sha256": "2df83b35c5dfa91575e0bf14af75511361605e17180de51d3385ce17b91eff76"
+  },
+  {
+    "file": "BPR_pop0p5__s2021__valid.csv.gz",
+    "bytes": 1855202,
+    "rows": 62142,
+    "sha256": "f567a46d5142f4d886aeabbf16bb8f7f2a8962613dadda8c37f836d5cfb2adf7"
+  },
+  {
+    "file": "BPR_pop0p5__s2021__test.csv.gz",
+    "bytes": 1792820,
+    "rows": 62142,
+    "sha256": "fffda2cec916ba4d0e2566d82bd06982e4d676f1a33bf3753c96e33501a00c35"
+  },
+  {
+    "file": "BPR_pop1p0__s2021__valid.csv.gz",
+    "bytes": 1713127,
+    "rows": 62142,
+    "sha256": "a66b38604d3ce0de5722d4a4f93d8047241d23af9aa87f6bb78b8df337a1377c"
+  },
+  {
+    "file": "BPR_pop1p0__s2021__test.csv.gz",
+    "bytes": 1696181,
+    "rows": 62142,
+    "sha256": "071bfb7e874626aa2a9515da5d5656c9b88585a7fc2ad259df93e85f5748fb70"
+  },
+  {
+    "file": "BPR__s2022__valid.csv.gz",
+    "bytes": 2290348,
+    "rows": 62142,
+    "sha256": "ec65dae5c4e2f4d26bddc89dc326d4ff7719ce53208cc032aec582b5911868a9"
+  },
+  {
+    "file": "BPR__s2022__test.csv.gz",
+    "bytes": 2214061,
+    "rows": 62142,
+    "sha256": "edcb740f1aa8024d94ef9261f0521e4fe464b36a9d9c5ca0a2e09fba64efc2e3"
+  },
+  {
+    "file": "BPR_pop0p25__s2022__valid.csv.gz",
+    "bytes": 2121714,
+    "rows": 62142,
+    "sha256": "db4ea60e0ab7552b0fea789d58561b80940502d65220bd833b73fb153e7b3ff1"
+  },
+  {
+    "file": "BPR_pop0p25__s2022__test.csv.gz",
+    "bytes": 2025067,
+    "rows": 62142,
+    "sha256": "b160ea5f52abb0818cf59b50252f9e4f0592743ed73935bed7363c4a97aab180"
+  },
+  {
+    "file": "BPR_pop0p5__s2022__valid.csv.gz",
+    "bytes": 1852155,
+    "rows": 62142,
+    "sha256": "70e7875538039223a295b21c5e31d3802bf96f0877f252f6b88f500ab5e88c77"
+  },
+  {
+    "file": "BPR_pop0p5__s2022__test.csv.gz",
+    "bytes": 1792838,
+    "rows": 62142,
+    "sha256": "b85b01934a8a47e75ff394cc583184b151c38b8185701cdbfeb7bb57f7188f32"
+  },
+  {
+    "file": "BPR_pop1p0__s2022__valid.csv.gz",
+    "bytes": 1710944,
+    "rows": 62142,
+    "sha256": "8367e91a42a3f2d41fb1daee81f30a7da1b2e2022a8ee6a9fbee04c1d698d7a6"
+  },
+  {
+    "file": "BPR_pop1p0__s2022__test.csv.gz",
+    "bytes": 1698283,
+    "rows": 62142,
+    "sha256": "f5b5192c5680525303ddb422a6f7f4af3ac32205e1650c12fa41d10a1e433926"
+  },
+  {
+    "file": "IKGR_kgoff__s2020__valid.csv.gz",
+    "bytes": 2292675,
+    "rows": 62142,
+    "sha256": "f681526b0d1f52546c81967107a67b7e05a8d9597528957c43e08719d3aface8"
+  },
+  {
+    "file": "IKGR_kgoff__s2020__test.csv.gz",
+    "bytes": 2214288,
+    "rows": 62142,
+    "sha256": "5b919c2669f807e9274fbcf4b584655c6c6ab4e9714ad9eef782fd23f4458500"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p25__s2020__valid.csv.gz",
+    "bytes": 2124708,
+    "rows": 62142,
+    "sha256": "ae71257fcd075cc442514590123149ae2d54d8898834d5b8a724097bc9d38cc1"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p25__s2020__test.csv.gz",
+    "bytes": 2024354,
+    "rows": 62142,
+    "sha256": "3b6ac9eabad391df7a09fd9d775b5a09da14ef55343d59a733be8bde6bf17e49"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p5__s2020__valid.csv.gz",
+    "bytes": 1862312,
+    "rows": 62142,
+    "sha256": "52b92ffa96e6454a835234185762a97c4a890556669f0822283a98adda52a40b"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p5__s2020__test.csv.gz",
+    "bytes": 1800122,
+    "rows": 62142,
+    "sha256": "6b18eb20eb234848afe8d6718ed82c4da36b16f4015ee96f773acc8a08d07ae2"
+  },
+  {
+    "file": "IKGR_kgoff_pop1p0__s2020__valid.csv.gz",
+    "bytes": 1712559,
+    "rows": 62142,
+    "sha256": "cb0ed5f421370ac9e100757f227256443d87e327633fb99690ffb2b5693dd830"
+  },
+  {
+    "file": "IKGR_kgoff_pop1p0__s2020__test.csv.gz",
+    "bytes": 1699210,
+    "rows": 62142,
+    "sha256": "ca8a23642393d87a554acebae695e1e5aeff531927d95832e2c5889926171341"
+  },
+  {
+    "file": "IKGR_kgoff__s2021__valid.csv.gz",
+    "bytes": 2291769,
+    "rows": 62142,
+    "sha256": "7d51f065bf5ede7fe9d0a941e57366248c7e5fd79e37e52a56fe84119c172220"
+  },
+  {
+    "file": "IKGR_kgoff__s2021__test.csv.gz",
+    "bytes": 2209244,
+    "rows": 62142,
+    "sha256": "1e28b43955704d1400afdc412c74b0628b76e3383eb2f81811c75fcbe4c6da99"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p25__s2021__valid.csv.gz",
+    "bytes": 2114290,
+    "rows": 62142,
+    "sha256": "402e2e5d614a5e455cfab72aa56315217609eb1259705d5d953b1c52bb41e554"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p25__s2021__test.csv.gz",
+    "bytes": 2014756,
+    "rows": 62142,
+    "sha256": "0ec3bb848b012a472c91e551561a6d94a352ffbb3b346b9aa936202891ab8e60"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p5__s2021__valid.csv.gz",
+    "bytes": 1853219,
+    "rows": 62142,
+    "sha256": "1ed1a0b72553159316d23d43c640552dd7f19d0f913fa1ba57e747650741e82d"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p5__s2021__test.csv.gz",
+    "bytes": 1791877,
+    "rows": 62142,
+    "sha256": "79b457bb366de30fd3c2d6cbce5a95c87189ebed4d35f5024464d208cca7bc2b"
+  },
+  {
+    "file": "IKGR_kgoff_pop1p0__s2021__valid.csv.gz",
+    "bytes": 1711526,
+    "rows": 62142,
+    "sha256": "b29f253fbb6fe8b5b7290c3542186b512926c1da49f7daa0e46d0aff472ba44b"
+  },
+  {
+    "file": "IKGR_kgoff_pop1p0__s2021__test.csv.gz",
+    "bytes": 1697096,
+    "rows": 62142,
+    "sha256": "cd657311d2caa6ab8fc8ea65fd14874d6f11a3c15e1836f2bacd27511eafede9"
+  },
+  {
+    "file": "IKGR_kgoff__s2022__valid.csv.gz",
+    "bytes": 2289732,
+    "rows": 62142,
+    "sha256": "4a9da7ecf936a15f17cdba43c3757d84e6075d46cf8bea6a70757fe752170484"
+  },
+  {
+    "file": "IKGR_kgoff__s2022__test.csv.gz",
+    "bytes": 2214501,
+    "rows": 62142,
+    "sha256": "c6e2d604d3f985460c4786d03e7fa2ac368a5d10598a9f8b53a272d0540df8bf"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p25__s2022__valid.csv.gz",
+    "bytes": 2121038,
+    "rows": 62142,
+    "sha256": "dc3e5dd4010f2d381daf5836f356aa203ccd35fed6d289f540f2e94b3d46a9ca"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p25__s2022__test.csv.gz",
+    "bytes": 2023815,
+    "rows": 62142,
+    "sha256": "967b7598e6c99042681e6ba67d63d06f5928257a6d99face0368b04b39484811"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p5__s2022__valid.csv.gz",
+    "bytes": 1852274,
+    "rows": 62142,
+    "sha256": "dca647d4c95f4a39ccef64da8bd4a3662ab1381a18a7c5add6641377ffa4f703"
+  },
+  {
+    "file": "IKGR_kgoff_pop0p5__s2022__test.csv.gz",
+    "bytes": 1793826,
+    "rows": 62142,
+    "sha256": "bc5f7fad0ae295eef35a77275698eb19ab9fa1c25e51d401ca09ace55a32e231"
+  },
+  {
+    "file": "IKGR_kgoff_pop1p0__s2022__valid.csv.gz",
+    "bytes": 1711243,
+    "rows": 62142,
+    "sha256": "1e2120ada54109f1d26ddd5f123a7555445ff636a90c9f96a57b5fd506cc9456"
+  },
+  {
+    "file": "IKGR_kgoff_pop1p0__s2022__test.csv.gz",
+    "bytes": 1696855,
+    "rows": 62142,
+    "sha256": "abe687a93a6485e8626d72be4039479c43c819ef2afedc30324ff88f7e001d9d"
+  },
+  {
+    "file": "IKGR_dyn_nointent__s2020__valid.csv.gz",
+    "bytes": 2316103,
+    "rows": 62142,
+    "sha256": "69c6e91a0e94895cc8d38a2d5d57e7c665cb9b3b74d293e8dc319bdb9c50b2cc"
+  },
+  {
+    "file": "IKGR_dyn_nointent__s2020__test.csv.gz",
+    "bytes": 2218705,
+    "rows": 62142,
+    "sha256": "86c82aa40758684ce3e7846d2c19ce37ac442a716e748ed7cac362cb0971859b"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p25__s2020__valid.csv.gz",
+    "bytes": 2184394,
+    "rows": 62142,
+    "sha256": "48d754a064e51a0f6131e337d0e622aca015545adc432ad3f12704c9cf991c14"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p25__s2020__test.csv.gz",
+    "bytes": 2066119,
+    "rows": 62142,
+    "sha256": "de376946a38271865b52ac5b82cc4d4895ddc8aa23e4be587518838cdb7396d2"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p5__s2020__valid.csv.gz",
+    "bytes": 1939097,
+    "rows": 62142,
+    "sha256": "2e2a34ceafce51b6c4a49557969014a102c76333db765fb6d083e7da5390aa2c"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p5__s2020__test.csv.gz",
+    "bytes": 1851185,
+    "rows": 62142,
+    "sha256": "6e0c34ca8f845c236f022fd36907148df50bf68d7603ca23eb9cf7ea8f5ff683"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop1p0__s2020__valid.csv.gz",
+    "bytes": 1740646,
+    "rows": 62142,
+    "sha256": "7aefe02a197e093073ce81778a0566db2995121a26d70c9167c43b98da0eac96"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop1p0__s2020__test.csv.gz",
+    "bytes": 1719867,
+    "rows": 62142,
+    "sha256": "0c496be2b36a86f20c86cf3bc2cc71048e2a9497df7495c1fedbacf2b605d166"
+  },
+  {
+    "file": "IKGR_dyn_nointent__s2021__valid.csv.gz",
+    "bytes": 2316169,
+    "rows": 62142,
+    "sha256": "8e0a1961b139c118ea29b2aa933e0adcf2d3564ad00fbbf68baae3ffe8b4cdd4"
+  },
+  {
+    "file": "IKGR_dyn_nointent__s2021__test.csv.gz",
+    "bytes": 2222717,
+    "rows": 62142,
+    "sha256": "9c89e9e3f69b71febfccb791cf5e942f27ac167929b0d5b07bb176a69c49e16c"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p25__s2021__valid.csv.gz",
+    "bytes": 2196057,
+    "rows": 62142,
+    "sha256": "ac3ba2ec16a656ad656d06b66264b21b3f3c48c02e5d55702d95b75f1d40126d"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p25__s2021__test.csv.gz",
+    "bytes": 2080246,
+    "rows": 62142,
+    "sha256": "d8fffced268ec5a43d169f68ee407d43ea3b3f6232e36e3819ff00a74acfb0f1"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p5__s2021__valid.csv.gz",
+    "bytes": 1931740,
+    "rows": 62142,
+    "sha256": "9f7e55223ca40f1701c3a458bfe0c43a7062a0b8f25d1419b84b41d44e81bcde"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p5__s2021__test.csv.gz",
+    "bytes": 1844161,
+    "rows": 62142,
+    "sha256": "7090142bbaee588d5efffef261ca88ebfcade21d00c491e4f00239e976919e29"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop1p0__s2021__valid.csv.gz",
+    "bytes": 1731941,
+    "rows": 62142,
+    "sha256": "ee7afda155559d66a4735078e39ce005625e1e1e5f7cad0a928a1a92d980cc94"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop1p0__s2021__test.csv.gz",
+    "bytes": 1716530,
+    "rows": 62142,
+    "sha256": "9c4ad2df15d166ede6123d3994685429e3a5e9a887ea04974e46726b87bb904e"
+  },
+  {
+    "file": "IKGR_dyn_nointent__s2022__valid.csv.gz",
+    "bytes": 2315921,
+    "rows": 62142,
+    "sha256": "082b97da2f8f7d009808905787b0bb7e8a659f9ad4287362f0bc8ccd4edc4cf9"
+  },
+  {
+    "file": "IKGR_dyn_nointent__s2022__test.csv.gz",
+    "bytes": 2222207,
+    "rows": 62142,
+    "sha256": "5407159559524213aa240c0b4a056c5efe3b9e6432ea020ee3c737b70073e59a"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p25__s2022__valid.csv.gz",
+    "bytes": 2196655,
+    "rows": 62142,
+    "sha256": "1b4ce19af76dfaf7ff89967cb988eb64ce65d78f232e6dd53827a5041935211c"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p25__s2022__test.csv.gz",
+    "bytes": 2076523,
+    "rows": 62142,
+    "sha256": "2422413b0f708efca983e21ecbfd94c2c30ca3e7a5d20e106de5d84e6a510ab4"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p5__s2022__valid.csv.gz",
+    "bytes": 1925775,
+    "rows": 62142,
+    "sha256": "cc04357c5f3d55d097927331c6286a1c00a9a2d2ad95e1cc016f35f381e3c35d"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop0p5__s2022__test.csv.gz",
+    "bytes": 1840155,
+    "rows": 62142,
+    "sha256": "c14e36095b862c433f4f8b03c2c04c004d955bb4d101b304e01331fbe71f0c2b"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop1p0__s2022__valid.csv.gz",
+    "bytes": 1731416,
+    "rows": 62142,
+    "sha256": "ecebbc912f5a6e6ed79f24470c0624ba81c25ce4875f55771490855c4b40905c"
+  },
+  {
+    "file": "IKGR_dyn_nointent_pop1p0__s2022__test.csv.gz",
+    "bytes": 1718979,
+    "rows": 62142,
+    "sha256": "9f6c9c88d673f5d37bec570563d8b5b879ad26a4b90bb4b7fe3ba631650c8cf5"
+  },
+  {
+    "file": "IKGR_dyn__s2020__valid.csv.gz",
+    "bytes": 2315555,
+    "rows": 62142,
+    "sha256": "fb7497d8c48ba68d9e735f26ccb0873a87cace34fb031e65d938a56e81ce9571"
+  },
+  {
+    "file": "IKGR_dyn__s2020__test.csv.gz",
+    "bytes": 2221670,
+    "rows": 62142,
+    "sha256": "b698e0a44523e1de4a57ff4dd1544ed89a5b1bf801a50ed236ee60a5da53d79e"
+  },
+  {
+    "file": "IKGR_dyn_pop0p25__s2020__valid.csv.gz",
+    "bytes": 2195711,
+    "rows": 62142,
+    "sha256": "47a1d1693388c514d14ef71210810f672e8d7cd2f2a5e697dc3e5cf51d73cd51"
+  },
+  {
+    "file": "IKGR_dyn_pop0p25__s2020__test.csv.gz",
+    "bytes": 2080099,
+    "rows": 62142,
+    "sha256": "6f6e080bf64976cb9d70b9b3015805d96496ea9bbd6cd8066cccaa259cbde9ab"
+  },
+  {
+    "file": "IKGR_dyn_pop0p5__s2020__valid.csv.gz",
+    "bytes": 1935871,
+    "rows": 62142,
+    "sha256": "c5c4dc094a7d3675f878edf402aa6ea1c5ee53c52fda5c70ea705f5c0d243add"
+  },
+  {
+    "file": "IKGR_dyn_pop0p5__s2020__test.csv.gz",
+    "bytes": 1849176,
+    "rows": 62142,
+    "sha256": "c5c91c64fc094ca789f2d415fb2f5da511eaac713ee0014800869db2330904f8"
+  },
+  {
+    "file": "IKGR_dyn_pop1p0__s2020__valid.csv.gz",
+    "bytes": 1730692,
+    "rows": 62142,
+    "sha256": "8e31416f05d636e9b57c639f756fe0fb15838aad175336245feaff2a46cd2905"
+  },
+  {
+    "file": "IKGR_dyn_pop1p0__s2020__test.csv.gz",
+    "bytes": 1716044,
+    "rows": 62142,
+    "sha256": "2429928b3dde4f2cbc3813c667032973778113b77878c490642c517db0dad9b4"
+  },
+  {
+    "file": "IKGR_dyn__s2021__valid.csv.gz",
+    "bytes": 2313058,
+    "rows": 62142,
+    "sha256": "8f956e2f1c361c4a4f21e5da10aa3e26cf4888f012263cd1ead5cecc2248626e"
+  },
+  {
+    "file": "IKGR_dyn__s2021__test.csv.gz",
+    "bytes": 2219547,
+    "rows": 62142,
+    "sha256": "13783d9e767b6facb68e0c4380502a7eb8e25ae1a16a5b76703f54ab6d48d3ae"
+  },
+  {
+    "file": "IKGR_dyn_pop0p25__s2021__valid.csv.gz",
+    "bytes": 2194540,
+    "rows": 62142,
+    "sha256": "dcd8fe09c0fa227c817f37d4e92e5c09f6e68af663b231a74d0dd6b28323b0bb"
+  },
+  {
+    "file": "IKGR_dyn_pop0p25__s2021__test.csv.gz",
+    "bytes": 2076993,
+    "rows": 62142,
+    "sha256": "6a38e6204f7e7b51808a969028d58836d8dfa9db4b246a8e90658b26970f897c"
+  },
+  {
+    "file": "IKGR_dyn_pop0p5__s2021__valid.csv.gz",
+    "bytes": 1945793,
+    "rows": 62142,
+    "sha256": "789334d2cf9aca05462e0482388c050b2765b5785b1e6dca109d46e9252a5972"
+  },
+  {
+    "file": "IKGR_dyn_pop0p5__s2021__test.csv.gz",
+    "bytes": 1857209,
+    "rows": 62142,
+    "sha256": "0c19b8208beaa161a510dcf6e45b8fa4809bcd354d59fc73b69366742ea96c2a"
+  },
+  {
+    "file": "IKGR_dyn_pop1p0__s2021__valid.csv.gz",
+    "bytes": 1736794,
+    "rows": 62142,
+    "sha256": "25721897fd379347a8887ef8212810d4d92917f6057b02b09f5b68cebe20764b"
+  },
+  {
+    "file": "IKGR_dyn_pop1p0__s2021__test.csv.gz",
+    "bytes": 1720441,
+    "rows": 62142,
+    "sha256": "467605c80809e0f908f2a0f5cf3fcd12721f7303b2594d54149ca722d0648644"
+  },
+  {
+    "file": "IKGR_dyn__s2022__valid.csv.gz",
+    "bytes": 2315615,
+    "rows": 62142,
+    "sha256": "6a03659b832d94d8457dd7d20fc1dea183306f3aa160649d383684d8bd394767"
+  },
+  {
+    "file": "IKGR_dyn__s2022__test.csv.gz",
+    "bytes": 2223155,
+    "rows": 62142,
+    "sha256": "82be579ba1e93ee60f9d7feaeb4122f12351933773f22c9744678ceb97de7203"
+  },
+  {
+    "file": "IKGR_dyn_pop0p25__s2022__valid.csv.gz",
+    "bytes": 2186705,
+    "rows": 62142,
+    "sha256": "6f999f75be84d2aa57e64614aa9cac6ee6ae35b0cd0f8d98af1d5e7fdfba9d46"
+  },
+  {
+    "file": "IKGR_dyn_pop0p25__s2022__test.csv.gz",
+    "bytes": 2070811,
+    "rows": 62142,
+    "sha256": "96dba1fb459989602e2ce73dc58a5372221fb3123107fe4a41757643e6b2312e"
+  },
+  {
+    "file": "IKGR_dyn_pop0p5__s2022__valid.csv.gz",
+    "bytes": 1941560,
+    "rows": 62142,
+    "sha256": "c822464f8bffd5f35ed2dee79b1a7e3d17adf1241532c31ee24b16f8d5ac1e28"
+  },
+  {
+    "file": "IKGR_dyn_pop0p5__s2022__test.csv.gz",
+    "bytes": 1855352,
+    "rows": 62142,
+    "sha256": "d50d0daccf68091c9d8e6a2d5ad043707df5bddb362cd5648ce0b82c51fefe42"
+  },
+  {
+    "file": "IKGR_dyn_pop1p0__s2022__valid.csv.gz",
+    "bytes": 1742672,
+    "rows": 62142,
+    "sha256": "2dfaaaf9121b34faf15a5f69cba63662b7b220b6cb2b05f0b563e77b970b188d"
+  },
+  {
+    "file": "IKGR_dyn_pop1p0__s2022__test.csv.gz",
+    "bytes": 1720438,
+    "rows": 62142,
+    "sha256": "fc6dd89d12cce6ec60824688c83c41bd075d05c62b2a2fd1b1938a0cde246cff"
+  },
+  {
+    "file": "IKGR_dyn_filter5__s2020__valid.csv.gz",
+    "bytes": 2316645,
+    "rows": 62142,
+    "sha256": "bfd01d68b7fcc87b975ca1136494a6a5c8aac14100ad61ec9821e44186cc0736"
+  },
+  {
+    "file": "IKGR_dyn_filter5__s2020__test.csv.gz",
+    "bytes": 2221898,
+    "rows": 62142,
+    "sha256": "52f6ffa73259f21a800b71aac5ef783cdf2ca1e998b24c17026af3ec81090b5f"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p25__s2020__valid.csv.gz",
+    "bytes": 2189854,
+    "rows": 62142,
+    "sha256": "339ee84d791c7f2eca7a8b94b9db2f4725f47941cf699c19f0b0dcfcabd6ebd1"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p25__s2020__test.csv.gz",
+    "bytes": 2072902,
+    "rows": 62142,
+    "sha256": "0cfaf00666ca7bdaa6f80434fbcb80ab33596167170676dae52bff3e55d02f92"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p5__s2020__valid.csv.gz",
+    "bytes": 1945340,
+    "rows": 62142,
+    "sha256": "b1452e11f34d8dd4e324fe82bc00b60c7f4d57e75b8d0e31fdf765c9e4802b6f"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p5__s2020__test.csv.gz",
+    "bytes": 1856051,
+    "rows": 62142,
+    "sha256": "94b06449bcd8ab100c7640f932ffb59e07c191d59ceb3c90483425d5e9723fd2"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop1p0__s2020__valid.csv.gz",
+    "bytes": 1742137,
+    "rows": 62142,
+    "sha256": "b2428323ac349cf5431dc1723a48238fafb0e5b548f1f6252db96c4eace07654"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop1p0__s2020__test.csv.gz",
+    "bytes": 1722416,
+    "rows": 62142,
+    "sha256": "e68673c85f7c520efadfb79752f9c29dad8e80c687b26c4953bba2d4f69844bc"
+  },
+  {
+    "file": "IKGR_dyn_filter5__s2021__valid.csv.gz",
+    "bytes": 2313925,
+    "rows": 62142,
+    "sha256": "5a0bea9fdec3d3ef7ffc32c3978568375b95f52ebf7885c9478891a5c6686f48"
+  },
+  {
+    "file": "IKGR_dyn_filter5__s2021__test.csv.gz",
+    "bytes": 2221572,
+    "rows": 62142,
+    "sha256": "0d98f91c8b0927082c7a7bbc9733d140139a49356d9790bbfa47ca59c6271a40"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p25__s2021__valid.csv.gz",
+    "bytes": 2194191,
+    "rows": 62142,
+    "sha256": "189420769fc792487abdec476dcbda0244a22d00b748f148b8b0ae1e5a602d64"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p25__s2021__test.csv.gz",
+    "bytes": 2075975,
+    "rows": 62142,
+    "sha256": "66e0298f4fd9f4360a694b5b0a2e7bbf429f4f1557e4f337026db38cfaa8b103"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p5__s2021__valid.csv.gz",
+    "bytes": 1940816,
+    "rows": 62142,
+    "sha256": "bbcbc904db39879a16f3ed3f3affaf9bc960424c36d55ddd109629833737c2f7"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p5__s2021__test.csv.gz",
+    "bytes": 1853015,
+    "rows": 62142,
+    "sha256": "3d2528e17ddbd941bdb244801182ad3c5a1f1e49fca9e74d2ada549fa425e3b1"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop1p0__s2021__valid.csv.gz",
+    "bytes": 1737012,
+    "rows": 62142,
+    "sha256": "838cea9772b792fe49a15bf9b17cdc6ce1861515c41e2aba5d046085c6f31c1b"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop1p0__s2021__test.csv.gz",
+    "bytes": 1720677,
+    "rows": 62142,
+    "sha256": "58e4fd24bbea0099cf517f271bff4bf3baeb5e160203da3fb76f8340c1b0910d"
+  },
+  {
+    "file": "IKGR_dyn_filter5__s2022__valid.csv.gz",
+    "bytes": 2315170,
+    "rows": 62142,
+    "sha256": "040fcc825505fcef688e8111f2751b6123f85386035bf9d10793610fed86b70f"
+  },
+  {
+    "file": "IKGR_dyn_filter5__s2022__test.csv.gz",
+    "bytes": 2222336,
+    "rows": 62142,
+    "sha256": "1c919c54af10686cb37dc8665a3afda58814e21116608a24ff5e0678f6f83373"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p25__s2022__valid.csv.gz",
+    "bytes": 2186283,
+    "rows": 62142,
+    "sha256": "54aa8043a52b38a3d18d5866fd8e391244f48714261f263d4bc408245b8f0768"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p25__s2022__test.csv.gz",
+    "bytes": 2070935,
+    "rows": 62142,
+    "sha256": "82a3c30079826eea011182f7d1b53048b2fe1b073d57c0e64bccde1a5b4fce79"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p5__s2022__valid.csv.gz",
+    "bytes": 1941642,
+    "rows": 62142,
+    "sha256": "40dfc8377e2743088f0ad2e9acaa845b11a8fa801d7c6773a1ee0dfd7d79ad8f"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop0p5__s2022__test.csv.gz",
+    "bytes": 1853426,
+    "rows": 62142,
+    "sha256": "1f03dc49c6a05fb8a9dd166a1908d53bda23ce35cfe7953fe34c378073511ac5"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop1p0__s2022__valid.csv.gz",
+    "bytes": 1743403,
+    "rows": 62142,
+    "sha256": "6590f8b4f4de2ac47de5ae8f9a0e393260edcd408b927fb1372632b748f3a765"
+  },
+  {
+    "file": "IKGR_dyn_filter5_pop1p0__s2022__test.csv.gz",
+    "bytes": 1721036,
+    "rows": 62142,
+    "sha256": "08f5a8d5a7c522fb66a2b60f3233108e970b7e2b7cc6ecd6043042815651ab9f"
+  },
+  {
+    "file": "IKGR_dyn_filter10__s2020__valid.csv.gz",
+    "bytes": 2316361,
+    "rows": 62142,
+    "sha256": "831512606b9482fda4d4de4412b0fce0e3ea039122f437ff5b4a81f236ea3aaa"
+  },
+  {
+    "file": "IKGR_dyn_filter10__s2020__test.csv.gz",
+    "bytes": 2224968,
+    "rows": 62142,
+    "sha256": "57bc4ed240f6b4831b60a4e3bc24916e224077b7e1df36ddb6d67663d9a4d7b6"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p25__s2020__valid.csv.gz",
+    "bytes": 2190325,
+    "rows": 62142,
+    "sha256": "e851b0f01ca0c7300dc62a952a4b2147fc20e2b34fb06dc07278774867070ac4"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p25__s2020__test.csv.gz",
+    "bytes": 2073863,
+    "rows": 62142,
+    "sha256": "fa78df1ef673e15e325c4029f7f2ed92772a90781c2432359ff3c7d213ba5d1e"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p5__s2020__valid.csv.gz",
+    "bytes": 1943640,
+    "rows": 62142,
+    "sha256": "9e7b9c0d4462b3c3da5fb3cfa8082335503b5f7fb72cbe01f20354813738999a"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p5__s2020__test.csv.gz",
+    "bytes": 1854309,
+    "rows": 62142,
+    "sha256": "e570007986fa2b2d477d94328a85c6d8287bbf259a9349960b9a481872140203"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop1p0__s2020__valid.csv.gz",
+    "bytes": 1740414,
+    "rows": 62142,
+    "sha256": "5a637cdd707f4a8fb5a3e0e0224e8d33f4cf5ddd3cb78efa84915639a9e1bb5d"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop1p0__s2020__test.csv.gz",
+    "bytes": 1720706,
+    "rows": 62142,
+    "sha256": "6d3a8eaf14db9b548b78016c6b311eb2f68e14ad2e31be8d08505297ab0113dc"
+  },
+  {
+    "file": "IKGR_dyn_filter10__s2021__valid.csv.gz",
+    "bytes": 2314738,
+    "rows": 62142,
+    "sha256": "d7f2c7336753e26cbf4657220795b46022b56e65ca9d00c24f4a17de4ad52720"
+  },
+  {
+    "file": "IKGR_dyn_filter10__s2021__test.csv.gz",
+    "bytes": 2219958,
+    "rows": 62142,
+    "sha256": "1cba6963375d234f33c087dfa1d61515dac915418db0ff5bcd7c0dff6c60353b"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p25__s2021__valid.csv.gz",
+    "bytes": 2193535,
+    "rows": 62142,
+    "sha256": "bc8c822be1b86e4a09568e7016d01283de0a87dec7867a03592155088b2c4e6d"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p25__s2021__test.csv.gz",
+    "bytes": 2075480,
+    "rows": 62142,
+    "sha256": "3289f39ccc63431a559fbf2618a2aec740f265cd25cdde248a65dc79a9deb3c4"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p5__s2021__valid.csv.gz",
+    "bytes": 1940495,
+    "rows": 62142,
+    "sha256": "40fa950563991cfdf0c9d05655e704a8cd2892d1ab85511f456ebfd563a2db06"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p5__s2021__test.csv.gz",
+    "bytes": 1853272,
+    "rows": 62142,
+    "sha256": "65189268d6630a68b511bba51afa44ee641d494e1dac6c72d87dcbe67bf17eef"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop1p0__s2021__valid.csv.gz",
+    "bytes": 1736645,
+    "rows": 62142,
+    "sha256": "ced3b0c2fe688f12387f0bf506c52aa558aa3d54a05967ac3b42051c96110480"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop1p0__s2021__test.csv.gz",
+    "bytes": 1719063,
+    "rows": 62142,
+    "sha256": "73d616552fc9e39545a1c1072d4fe8045cde871811f4c23a0da557ba055723e3"
+  },
+  {
+    "file": "IKGR_dyn_filter10__s2022__valid.csv.gz",
+    "bytes": 2314094,
+    "rows": 62142,
+    "sha256": "c685f29c47dfa05e9f7979314471d153740455d94b92fed8a23f32356a46a153"
+  },
+  {
+    "file": "IKGR_dyn_filter10__s2022__test.csv.gz",
+    "bytes": 2220872,
+    "rows": 62142,
+    "sha256": "aa1af1353a6c06ce84315d883ea5f617b3fbb16ac31b870e473023cf94dd1513"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p25__s2022__valid.csv.gz",
+    "bytes": 2205320,
+    "rows": 62142,
+    "sha256": "5bc7fe8f1eb87ecc468eda1ad6de5ef77ef15c3eaac91a23815c60d98d10238e"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p25__s2022__test.csv.gz",
+    "bytes": 2087121,
+    "rows": 62142,
+    "sha256": "4673fc28e1f1bd5a855771e9e20a67138207fafa87c056b23c159da42b957438"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p5__s2022__valid.csv.gz",
+    "bytes": 1934103,
+    "rows": 62142,
+    "sha256": "21ceb17e5878491523519454cb4adbdd774d24133547fc309f817588247c7c7f"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop0p5__s2022__test.csv.gz",
+    "bytes": 1850440,
+    "rows": 62142,
+    "sha256": "942ed62953695ab977b168127ea3f8d02b645e5a0bbacfc5001edc0dec023606"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop1p0__s2022__valid.csv.gz",
+    "bytes": 1729726,
+    "rows": 62142,
+    "sha256": "bdc8d1d3d2a9a6d84210f0837aa051555ff840b7bcda0c0b4d6c7caabeabf304"
+  },
+  {
+    "file": "IKGR_dyn_filter10_pop1p0__s2022__test.csv.gz",
+    "bytes": 1717414,
+    "rows": 62142,
+    "sha256": "ff4f237f3119d9e0ae7d33f0d42598d1827c29a6940d8842cc13ca6154c4d6f1"
+  },
+  {
+    "file": "IKGR_dyn_filter20__s2020__valid.csv.gz",
+    "bytes": 2315653,
+    "rows": 62142,
+    "sha256": "d670c654a8e39faaced11693dc0eb92d35e8b6e753b276b4ec3f4461b8a8857d"
+  },
+  {
+    "file": "IKGR_dyn_filter20__s2020__test.csv.gz",
+    "bytes": 2222856,
+    "rows": 62142,
+    "sha256": "a09a579e442e9c93c6b5cc6648d42dc95b0f6e97c7f4135ff52ceb8d6dcbf021"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p25__s2020__valid.csv.gz",
+    "bytes": 2189402,
+    "rows": 62142,
+    "sha256": "fd10c4e787b38d53b0cc721c85fafd0c0b662a5d09bf09c9ba94912d5b337478"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p25__s2020__test.csv.gz",
+    "bytes": 2073685,
+    "rows": 62142,
+    "sha256": "98b892931b00785ec10a977da63b80876784b3025fcc5ff500cdf6196a5ff4ea"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p5__s2020__valid.csv.gz",
+    "bytes": 1944037,
+    "rows": 62142,
+    "sha256": "0775aad971acc39d764a229829c6e9a1911681047d58de61b07f666b01085cb8"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p5__s2020__test.csv.gz",
+    "bytes": 1854556,
+    "rows": 62142,
+    "sha256": "10125f723b95c270dfa947ee2866ce8d45c24e331b046f4165f2544901491b80"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop1p0__s2020__valid.csv.gz",
+    "bytes": 1740598,
+    "rows": 62142,
+    "sha256": "5c69f80125401bace530ec964cc595a430317882cc5a39e86166fb1556ec9620"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop1p0__s2020__test.csv.gz",
+    "bytes": 1722132,
+    "rows": 62142,
+    "sha256": "118cdbf5b485558e97b373834c77b078eaa4523d3ccb6fd0dc6bf12bc8812fa2"
+  },
+  {
+    "file": "IKGR_dyn_filter20__s2021__valid.csv.gz",
+    "bytes": 2316266,
+    "rows": 62142,
+    "sha256": "fbe8629c45b144dde337bdc46e5932779186eba743e96cc48ea4f55dcba12607"
+  },
+  {
+    "file": "IKGR_dyn_filter20__s2021__test.csv.gz",
+    "bytes": 2225269,
+    "rows": 62142,
+    "sha256": "4402e9f62d9ae59189c0580c71a5ba2da93ab2d6eb4b6d5a87d9cfdada46432e"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p25__s2021__valid.csv.gz",
+    "bytes": 2201910,
+    "rows": 62142,
+    "sha256": "1bd665a00cd7c4ddb0166f1394c6778e1c8fbd6602de30136e5103005cb5f63c"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p25__s2021__test.csv.gz",
+    "bytes": 2083702,
+    "rows": 62142,
+    "sha256": "664487c7b637d60c64207d7b82ec4b83dfdf299862c03c7dd73b8090204f79bd"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p5__s2021__valid.csv.gz",
+    "bytes": 1938415,
+    "rows": 62142,
+    "sha256": "ba5cdbc3421853a5014f8d047320063c9d703216d2bc9bab2d211acf8e3417a2"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p5__s2021__test.csv.gz",
+    "bytes": 1853088,
+    "rows": 62142,
+    "sha256": "b0169a6887f713a90ab7a8b10a57cb01cfb5a24c050f934872a68c2a16b1df19"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop1p0__s2021__valid.csv.gz",
+    "bytes": 1734344,
+    "rows": 62142,
+    "sha256": "c766c36ec22952ca0c75a36f41c63614686bff6e63d5f924ca69fa05f6211ec2"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop1p0__s2021__test.csv.gz",
+    "bytes": 1718187,
+    "rows": 62142,
+    "sha256": "8a7824c24c55a9c2b4652405a9d1345df1c88819b0588968645990b4ef6c14b7"
+  },
+  {
+    "file": "IKGR_dyn_filter20__s2022__valid.csv.gz",
+    "bytes": 2315004,
+    "rows": 62142,
+    "sha256": "5f1c9ac9b2af9ed5c2e4b70bad4e462a0e0e11bf0377373a6fcf5a71bcad052c"
+  },
+  {
+    "file": "IKGR_dyn_filter20__s2022__test.csv.gz",
+    "bytes": 2219955,
+    "rows": 62142,
+    "sha256": "fbab34d3793d14ce3016235fce2152dfccd1ffe90a9d060a85019ef8ae791460"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p25__s2022__valid.csv.gz",
+    "bytes": 2186365,
+    "rows": 62142,
+    "sha256": "d621c7b998dec5832932041daae183b2bfd2e2b65c277b80bf04a437054ca01c"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p25__s2022__test.csv.gz",
+    "bytes": 2069678,
+    "rows": 62142,
+    "sha256": "a267474dafc6112ae7c94fdfad71cebd4b02eb5bb1351690c093f9e6134130a9"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p5__s2022__valid.csv.gz",
+    "bytes": 1939698,
+    "rows": 62142,
+    "sha256": "7a4ed62da38cc6cf8d716c3c3014c0d2fe772f62a10d3a7ce7e11fd1eb827f05"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop0p5__s2022__test.csv.gz",
+    "bytes": 1852840,
+    "rows": 62142,
+    "sha256": "e86f5bd8f1020216b63941c4ffb5beb2ff5a21a400e3f2381d7cc133fcf091c0"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop1p0__s2022__valid.csv.gz",
+    "bytes": 1741459,
+    "rows": 62142,
+    "sha256": "ed76bc2331fc71c125300a8855c99d79bb48678424580762e00e90647bc497a9"
+  },
+  {
+    "file": "IKGR_dyn_filter20_pop1p0__s2022__test.csv.gz",
+    "bytes": 1721273,
+    "rows": 62142,
+    "sha256": "40cf75c287e8825790ad91448d930394ac6d00966577017e04aeaea83db55b81"
+  }
+]

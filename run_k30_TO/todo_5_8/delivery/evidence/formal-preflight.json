@@ -1,0 +1,690 @@
+{
+  "purpose": "preflight only; no optimizer steps, epochs or formal results",
+  "gpu": "NVIDIA GeForce RTX 2070 SUPER",
+  "torch": "2.3.0+cu121",
+  "cuda": "12.1",
+  "torch_threads": 6,
+  "train_interactions": 5042389,
+  "valid_users": 62142,
+  "test_users": 62142,
+  "eval_users_per_batch": 128,
+  "eval_batch_size": 3580928,
+  "seeds": [
+    2020,
+    2021,
+    2022
+  ],
+  "specs": [
+    "BPR",
+    "IKGR_kgoff",
+    "IKGR_dyn_nointent",
+    "IKGR_dyn",
+    "IKGR_dyn_filter5",
+    "IKGR_dyn_filter10",
+    "IKGR_dyn_filter20"
+  ],
+  "leakage_guard": {
+    "verified": true,
+    "pairs": 2478824,
+    "users_with_profile": 61874
+  },
+  "checks": {
+    "BPR": {
+      "cuda": true,
+      "finite_loss_and_gradients": true,
+      "finite_full_sort_scores": true,
+      "signature": "36b0337b4d2c3485",
+      "context": {
+        "schema": 5,
+        "spec": "BPR",
+        "model": "BPR",
+        "split": "TO",
+        "protocol": {
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06
+        },
+        "extra": {},
+        "paths": {
+          "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+          "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+          "inter_file": "data/kc_k30/interactions_k30.csv",
+          "kg_pack": "run_k30_TO/kg_pack.pt",
+          "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt",
+          "workdir": "run_k30_TO/todo_5_8/"
+        },
+        "data_fingerprint": {
+          "profile_provenance": "8503b7bef260bb49",
+          "kg_pack": "de33d8b805a4a0d6",
+          "meta_kg_pack": "c81cd9e3417da908",
+          "atomic_inter": "0ddbc7447a1406ad",
+          "provenance_meta": "a6901faeb4f73b34"
+        },
+        "recbole": {
+          "model": "IKGR",
+          "dataset": "ikgr-custom",
+          "topk": [
+            10,
+            30
+          ],
+          "metrics": [
+            "Recall",
+            "MRR",
+            "NDCG",
+            "Hit",
+            "Precision"
+          ],
+          "embedding_size": 64,
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06,
+          "dropout": 0.1,
+          "train_batch_size": 2048,
+          "eval_users_per_batch": 128,
+          "worker": 0,
+          "gpu_id": "0",
+          "require_cuda": true
+        },
+        "code": {
+          "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\eval_slices.py": "901463a198d4989f55df608ec4a4f193375e5797342b1d42ef821a4775c78c7d",
+          "ikgr_core/model_ikgr.py": "06291412637e97ceed132aef4746d672ec31e9c94fd9cda75f12bce2b45ec2fa",
+          "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01",
+          "ikgr_core/intent_filter.py": "ce9a83faa2681aa51366da559889781eb64b25e5da36b2cd208b9ed92620ec13",
+          "ikgr_core/pause_resume.py": "b6399c03f6496a4ab11c73ab6a45965fe5fb4843c76a5f061c9fe586bee3a55f",
+          "scripts/run_todo_5_8.py": "72de703318d859a9559983f04a3a276c9fcf00c96058e5f18cb2152f911f78cd"
+        },
+        "runtime": {
+          "torch": "2.3.0+cu121",
+          "cuda": "12.1",
+          "python": "3.11.18",
+          "recbole": "1.2.0",
+          "numpy": "1.26.4",
+          "scipy": "1.13.1",
+          "pandas": "2.2.2",
+          "process_hash_seed": "2020",
+          "gpu": "NVIDIA GeForce RTX 2070 SUPER",
+          "torch_threads": 6
+        }
+      }
+    },
+    "IKGR_kgoff": {
+      "cuda": true,
+      "finite_loss_and_gradients": true,
+      "finite_full_sort_scores": true,
+      "signature": "c1b75f2c32e1bee3",
+      "context": {
+        "schema": 5,
+        "spec": "IKGR_kgoff",
+        "model": "IKGR",
+        "split": "TO",
+        "protocol": {
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06
+        },
+        "extra": {
+          "use_kg": false
+        },
+        "paths": {
+          "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+          "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+          "inter_file": "data/kc_k30/interactions_k30.csv",
+          "kg_pack": "run_k30_TO/kg_pack.pt",
+          "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt",
+          "workdir": "run_k30_TO/todo_5_8/"
+        },
+        "data_fingerprint": {
+          "profile_provenance": "8503b7bef260bb49",
+          "kg_pack": "de33d8b805a4a0d6",
+          "meta_kg_pack": "c81cd9e3417da908",
+          "atomic_inter": "0ddbc7447a1406ad",
+          "provenance_meta": "a6901faeb4f73b34"
+        },
+        "recbole": {
+          "model": "IKGR",
+          "dataset": "ikgr-custom",
+          "topk": [
+            10,
+            30
+          ],
+          "metrics": [
+            "Recall",
+            "MRR",
+            "NDCG",
+            "Hit",
+            "Precision"
+          ],
+          "embedding_size": 64,
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06,
+          "dropout": 0.1,
+          "train_batch_size": 2048,
+          "eval_users_per_batch": 128,
+          "worker": 0,
+          "gpu_id": "0",
+          "require_cuda": true
+        },
+        "code": {
+          "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\eval_slices.py": "901463a198d4989f55df608ec4a4f193375e5797342b1d42ef821a4775c78c7d",
+          "ikgr_core/model_ikgr.py": "06291412637e97ceed132aef4746d672ec31e9c94fd9cda75f12bce2b45ec2fa",
+          "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01",
+          "ikgr_core/intent_filter.py": "ce9a83faa2681aa51366da559889781eb64b25e5da36b2cd208b9ed92620ec13",
+          "ikgr_core/pause_resume.py": "b6399c03f6496a4ab11c73ab6a45965fe5fb4843c76a5f061c9fe586bee3a55f",
+          "scripts/run_todo_5_8.py": "72de703318d859a9559983f04a3a276c9fcf00c96058e5f18cb2152f911f78cd"
+        },
+        "runtime": {
+          "torch": "2.3.0+cu121",
+          "cuda": "12.1",
+          "python": "3.11.18",
+          "recbole": "1.2.0",
+          "numpy": "1.26.4",
+          "scipy": "1.13.1",
+          "pandas": "2.2.2",
+          "process_hash_seed": "2020",
+          "gpu": "NVIDIA GeForce RTX 2070 SUPER",
+          "torch_threads": 6
+        }
+      }
+    },
+    "IKGR_dyn_nointent": {
+      "cuda": true,
+      "finite_loss_and_gradients": true,
+      "finite_full_sort_scores": true,
+      "signature": "f4d804c27a088eec",
+      "context": {
+        "schema": 5,
+        "spec": "IKGR_dyn_nointent",
+        "model": "IKGR",
+        "split": "TO",
+        "protocol": {
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06
+        },
+        "extra": {
+          "use_kg": false,
+          "kg_cap": 32,
+          "use_meta_kg": true,
+          "meta_kg_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\meta_kg_pack.pt",
+          "use_dynamic": true
+        },
+        "paths": {
+          "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+          "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+          "inter_file": "data/kc_k30/interactions_k30.csv",
+          "kg_pack": "run_k30_TO/kg_pack.pt",
+          "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt",
+          "workdir": "run_k30_TO/todo_5_8/"
+        },
+        "data_fingerprint": {
+          "profile_provenance": "8503b7bef260bb49",
+          "kg_pack": "de33d8b805a4a0d6",
+          "meta_kg_pack": "c81cd9e3417da908",
+          "atomic_inter": "0ddbc7447a1406ad",
+          "provenance_meta": "a6901faeb4f73b34"
+        },
+        "recbole": {
+          "model": "IKGR",
+          "dataset": "ikgr-custom",
+          "topk": [
+            10,
+            30
+          ],
+          "metrics": [
+            "Recall",
+            "MRR",
+            "NDCG",
+            "Hit",
+            "Precision"
+          ],
+          "embedding_size": 64,
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06,
+          "dropout": 0.1,
+          "train_batch_size": 2048,
+          "eval_users_per_batch": 128,
+          "worker": 0,
+          "gpu_id": "0",
+          "require_cuda": true
+        },
+        "code": {
+          "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\eval_slices.py": "901463a198d4989f55df608ec4a4f193375e5797342b1d42ef821a4775c78c7d",
+          "ikgr_core/model_ikgr.py": "06291412637e97ceed132aef4746d672ec31e9c94fd9cda75f12bce2b45ec2fa",
+          "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01",
+          "ikgr_core/intent_filter.py": "ce9a83faa2681aa51366da559889781eb64b25e5da36b2cd208b9ed92620ec13",
+          "ikgr_core/pause_resume.py": "b6399c03f6496a4ab11c73ab6a45965fe5fb4843c76a5f061c9fe586bee3a55f",
+          "scripts/run_todo_5_8.py": "72de703318d859a9559983f04a3a276c9fcf00c96058e5f18cb2152f911f78cd"
+        },
+        "runtime": {
+          "torch": "2.3.0+cu121",
+          "cuda": "12.1",
+          "python": "3.11.18",
+          "recbole": "1.2.0",
+          "numpy": "1.26.4",
+          "scipy": "1.13.1",
+          "pandas": "2.2.2",
+          "process_hash_seed": "2020",
+          "gpu": "NVIDIA GeForce RTX 2070 SUPER",
+          "torch_threads": 6
+        }
+      }
+    },
+    "IKGR_dyn": {
+      "cuda": true,
+      "finite_loss_and_gradients": true,
+      "finite_full_sort_scores": true,
+      "signature": "86e24b765f92160f",
+      "context": {
+        "schema": 5,
+        "spec": "IKGR_dyn",
+        "model": "IKGR",
+        "split": "TO",
+        "protocol": {
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06
+        },
+        "extra": {
+          "use_kg": true,
+          "kg_pack_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\kg_pack.pt",
+          "kg_layers": 1,
+          "kg_cap": 32,
+          "intent_learnable": false,
+          "use_meta_kg": true,
+          "meta_kg_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\meta_kg_pack.pt",
+          "use_dynamic": true
+        },
+        "paths": {
+          "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+          "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+          "inter_file": "data/kc_k30/interactions_k30.csv",
+          "kg_pack": "run_k30_TO/kg_pack.pt",
+          "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt",
+          "workdir": "run_k30_TO/todo_5_8/"
+        },
+        "data_fingerprint": {
+          "profile_provenance": "8503b7bef260bb49",
+          "kg_pack": "de33d8b805a4a0d6",
+          "meta_kg_pack": "c81cd9e3417da908",
+          "atomic_inter": "0ddbc7447a1406ad",
+          "provenance_meta": "a6901faeb4f73b34"
+        },
+        "recbole": {
+          "model": "IKGR",
+          "dataset": "ikgr-custom",
+          "topk": [
+            10,
+            30
+          ],
+          "metrics": [
+            "Recall",
+            "MRR",
+            "NDCG",
+            "Hit",
+            "Precision"
+          ],
+          "embedding_size": 64,
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06,
+          "dropout": 0.1,
+          "train_batch_size": 2048,
+          "eval_users_per_batch": 128,
+          "worker": 0,
+          "gpu_id": "0",
+          "require_cuda": true
+        },
+        "code": {
+          "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\eval_slices.py": "901463a198d4989f55df608ec4a4f193375e5797342b1d42ef821a4775c78c7d",
+          "ikgr_core/model_ikgr.py": "06291412637e97ceed132aef4746d672ec31e9c94fd9cda75f12bce2b45ec2fa",
+          "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01",
+          "ikgr_core/intent_filter.py": "ce9a83faa2681aa51366da559889781eb64b25e5da36b2cd208b9ed92620ec13",
+          "ikgr_core/pause_resume.py": "b6399c03f6496a4ab11c73ab6a45965fe5fb4843c76a5f061c9fe586bee3a55f",
+          "scripts/run_todo_5_8.py": "72de703318d859a9559983f04a3a276c9fcf00c96058e5f18cb2152f911f78cd"
+        },
+        "runtime": {
+          "torch": "2.3.0+cu121",
+          "cuda": "12.1",
+          "python": "3.11.18",
+          "recbole": "1.2.0",
+          "numpy": "1.26.4",
+          "scipy": "1.13.1",
+          "pandas": "2.2.2",
+          "process_hash_seed": "2020",
+          "gpu": "NVIDIA GeForce RTX 2070 SUPER",
+          "torch_threads": 6
+        }
+      },
+      "filter": {
+        "pct": 0.0,
+        "removed_count": 0,
+        "active": 114794
+      }
+    },
+    "IKGR_dyn_filter5": {
+      "cuda": true,
+      "finite_loss_and_gradients": true,
+      "finite_full_sort_scores": true,
+      "signature": "4a2df09d202eed3a",
+      "context": {
+        "schema": 5,
+        "spec": "IKGR_dyn_filter5",
+        "model": "IKGR",
+        "split": "TO",
+        "protocol": {
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06
+        },
+        "extra": {
+          "use_kg": true,
+          "kg_pack_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\kg_pack.pt",
+          "kg_layers": 1,
+          "kg_cap": 32,
+          "intent_learnable": false,
+          "use_meta_kg": true,
+          "meta_kg_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\meta_kg_pack.pt",
+          "use_dynamic": true,
+          "intent_filter_top_pct": 5
+        },
+        "paths": {
+          "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+          "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+          "inter_file": "data/kc_k30/interactions_k30.csv",
+          "kg_pack": "run_k30_TO/kg_pack.pt",
+          "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt",
+          "workdir": "run_k30_TO/todo_5_8/"
+        },
+        "data_fingerprint": {
+          "profile_provenance": "8503b7bef260bb49",
+          "kg_pack": "de33d8b805a4a0d6",
+          "meta_kg_pack": "c81cd9e3417da908",
+          "atomic_inter": "0ddbc7447a1406ad",
+          "provenance_meta": "a6901faeb4f73b34"
+        },
+        "recbole": {
+          "model": "IKGR",
+          "dataset": "ikgr-custom",
+          "topk": [
+            10,
+            30
+          ],
+          "metrics": [
+            "Recall",
+            "MRR",
+            "NDCG",
+            "Hit",
+            "Precision"
+          ],
+          "embedding_size": 64,
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06,
+          "dropout": 0.1,
+          "train_batch_size": 2048,
+          "eval_users_per_batch": 128,
+          "worker": 0,
+          "gpu_id": "0",
+          "require_cuda": true
+        },
+        "code": {
+          "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\eval_slices.py": "901463a198d4989f55df608ec4a4f193375e5797342b1d42ef821a4775c78c7d",
+          "ikgr_core/model_ikgr.py": "06291412637e97ceed132aef4746d672ec31e9c94fd9cda75f12bce2b45ec2fa",
+          "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01",
+          "ikgr_core/intent_filter.py": "ce9a83faa2681aa51366da559889781eb64b25e5da36b2cd208b9ed92620ec13",
+          "ikgr_core/pause_resume.py": "b6399c03f6496a4ab11c73ab6a45965fe5fb4843c76a5f061c9fe586bee3a55f",
+          "scripts/run_todo_5_8.py": "72de703318d859a9559983f04a3a276c9fcf00c96058e5f18cb2152f911f78cd"
+        },
+        "runtime": {
+          "torch": "2.3.0+cu121",
+          "cuda": "12.1",
+          "python": "3.11.18",
+          "recbole": "1.2.0",
+          "numpy": "1.26.4",
+          "scipy": "1.13.1",
+          "pandas": "2.2.2",
+          "process_hash_seed": "2020",
+          "gpu": "NVIDIA GeForce RTX 2070 SUPER",
+          "torch_threads": 6
+        }
+      },
+      "filter": {
+        "pct": 5.0,
+        "removed_count": 5739,
+        "active": 114794
+      }
+    },
+    "IKGR_dyn_filter10": {
+      "cuda": true,
+      "finite_loss_and_gradients": true,
+      "finite_full_sort_scores": true,
+      "signature": "1828188124079397",
+      "context": {
+        "schema": 5,
+        "spec": "IKGR_dyn_filter10",
+        "model": "IKGR",
+        "split": "TO",
+        "protocol": {
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06
+        },
+        "extra": {
+          "use_kg": true,
+          "kg_pack_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\kg_pack.pt",
+          "kg_layers": 1,
+          "kg_cap": 32,
+          "intent_learnable": false,
+          "use_meta_kg": true,
+          "meta_kg_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\meta_kg_pack.pt",
+          "use_dynamic": true,
+          "intent_filter_top_pct": 10
+        },
+        "paths": {
+          "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+          "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+          "inter_file": "data/kc_k30/interactions_k30.csv",
+          "kg_pack": "run_k30_TO/kg_pack.pt",
+          "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt",
+          "workdir": "run_k30_TO/todo_5_8/"
+        },
+        "data_fingerprint": {
+          "profile_provenance": "8503b7bef260bb49",
+          "kg_pack": "de33d8b805a4a0d6",
+          "meta_kg_pack": "c81cd9e3417da908",
+          "atomic_inter": "0ddbc7447a1406ad",
+          "provenance_meta": "a6901faeb4f73b34"
+        },
+        "recbole": {
+          "model": "IKGR",
+          "dataset": "ikgr-custom",
+          "topk": [
+            10,
+            30
+          ],
+          "metrics": [
+            "Recall",
+            "MRR",
+            "NDCG",
+            "Hit",
+            "Precision"
+          ],
+          "embedding_size": 64,
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06,
+          "dropout": 0.1,
+          "train_batch_size": 2048,
+          "eval_users_per_batch": 128,
+          "worker": 0,
+          "gpu_id": "0",
+          "require_cuda": true
+        },
+        "code": {
+          "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\eval_slices.py": "901463a198d4989f55df608ec4a4f193375e5797342b1d42ef821a4775c78c7d",
+          "ikgr_core/model_ikgr.py": "06291412637e97ceed132aef4746d672ec31e9c94fd9cda75f12bce2b45ec2fa",
+          "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01",
+          "ikgr_core/intent_filter.py": "ce9a83faa2681aa51366da559889781eb64b25e5da36b2cd208b9ed92620ec13",
+          "ikgr_core/pause_resume.py": "b6399c03f6496a4ab11c73ab6a45965fe5fb4843c76a5f061c9fe586bee3a55f",
+          "scripts/run_todo_5_8.py": "72de703318d859a9559983f04a3a276c9fcf00c96058e5f18cb2152f911f78cd"
+        },
+        "runtime": {
+          "torch": "2.3.0+cu121",
+          "cuda": "12.1",
+          "python": "3.11.18",
+          "recbole": "1.2.0",
+          "numpy": "1.26.4",
+          "scipy": "1.13.1",
+          "pandas": "2.2.2",
+          "process_hash_seed": "2020",
+          "gpu": "NVIDIA GeForce RTX 2070 SUPER",
+          "torch_threads": 6
+        }
+      },
+      "filter": {
+        "pct": 10.0,
+        "removed_count": 11479,
+        "active": 114794
+      }
+    },
+    "IKGR_dyn_filter20": {
+      "cuda": true,
+      "finite_loss_and_gradients": true,
+      "finite_full_sort_scores": true,
+      "signature": "ac068bb07a815ce3",
+      "context": {
+        "schema": 5,
+        "spec": "IKGR_dyn_filter20",
+        "model": "IKGR",
+        "split": "TO",
+        "protocol": {
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06
+        },
+        "extra": {
+          "use_kg": true,
+          "kg_pack_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\kg_pack.pt",
+          "kg_layers": 1,
+          "kg_cap": 32,
+          "intent_learnable": false,
+          "use_meta_kg": true,
+          "meta_kg_path": "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\run_k30_TO\\meta_kg_pack.pt",
+          "use_dynamic": true,
+          "intent_filter_top_pct": 20
+        },
+        "paths": {
+          "input_csv": "data/kc_k30/profiles_k30_TO.csv",
+          "profile_provenance": "data/kc_k30/profile_provenance_k30_TO.csv.gz",
+          "inter_file": "data/kc_k30/interactions_k30.csv",
+          "kg_pack": "run_k30_TO/kg_pack.pt",
+          "meta_kg_pack": "run_k30_TO/meta_kg_pack.pt",
+          "workdir": "run_k30_TO/todo_5_8/"
+        },
+        "data_fingerprint": {
+          "profile_provenance": "8503b7bef260bb49",
+          "kg_pack": "de33d8b805a4a0d6",
+          "meta_kg_pack": "c81cd9e3417da908",
+          "atomic_inter": "0ddbc7447a1406ad",
+          "provenance_meta": "a6901faeb4f73b34"
+        },
+        "recbole": {
+          "model": "IKGR",
+          "dataset": "ikgr-custom",
+          "topk": [
+            10,
+            30
+          ],
+          "metrics": [
+            "Recall",
+            "MRR",
+            "NDCG",
+            "Hit",
+            "Precision"
+          ],
+          "embedding_size": 64,
+          "epochs": 40,
+          "eval_step": 2,
+          "stopping_step": 3,
+          "valid_metric": "NDCG@10",
+          "learning_rate": 0.001,
+          "reg_weight": 1e-06,
+          "dropout": 0.1,
+          "train_batch_size": 2048,
+          "eval_users_per_batch": 128,
+          "worker": 0,
+          "gpu_id": "0",
+          "require_cuda": true
+        },
+        "code": {
+          "C:\\Users\\SLemon\\Documents\\Codex\\2026-11-09\\https-github-com-hk1ds-goodreads-november\\work\\repo\\eval_slices.py": "901463a198d4989f55df608ec4a4f193375e5797342b1d42ef821a4775c78c7d",
+          "ikgr_core/model_ikgr.py": "06291412637e97ceed132aef4746d672ec31e9c94fd9cda75f12bce2b45ec2fa",
+          "ikgr_core/corona_retriever.py": "b208614cfeec8b4e7e72ca57596b7b0ffc4ec75fc5e90be0af44a8580fcebc01",
+          "ikgr_core/intent_filter.py": "ce9a83faa2681aa51366da559889781eb64b25e5da36b2cd208b9ed92620ec13",
+          "ikgr_core/pause_resume.py": "b6399c03f6496a4ab11c73ab6a45965fe5fb4843c76a5f061c9fe586bee3a55f",
+          "scripts/run_todo_5_8.py": "72de703318d859a9559983f04a3a276c9fcf00c96058e5f18cb2152f911f78cd"
+        },
+        "runtime": {
+          "torch": "2.3.0+cu121",
+          "cuda": "12.1",
+          "python": "3.11.18",
+          "recbole": "1.2.0",
+          "numpy": "1.26.4",
+          "scipy": "1.13.1",
+          "pandas": "2.2.2",
+          "process_hash_seed": "2020",
+          "gpu": "NVIDIA GeForce RTX 2070 SUPER",
+          "torch_threads": 6
+        }
+      },
+      "filter": {
+        "pct": 20.0,
+        "removed_count": 22958,
+        "active": 114794
+      }
+    }
+  },
+  "filter_sets_nested": true,
+  "status": "passed"
+}

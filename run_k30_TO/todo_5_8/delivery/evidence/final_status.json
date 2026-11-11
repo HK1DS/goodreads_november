@@ -1,0 +1,19 @@
+{
+  "state": "completed",
+  "time": 1794266724.6827748,
+  "pid": 22792,
+  "phase": "all",
+  "gpu_released": true,
+  "exit_code": 0,
+  "spec": "IKGR_dyn_filter20",
+  "seed": 2022,
+  "signature": "ac068bb07a815ce3",
+  "pop_grid": [
+    0.25,
+    0.5,
+    1.0
+  ],
+  "dump_valid": true,
+  "epoch": 33,
+  "max_epochs": 40
+}
